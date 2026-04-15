@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Ejecutivo · Cliente 360 · Muebles Jamar 2025</title>
+<style>
+:root {
+  --primary: #1a3a5c; --accent: #e8722a; --bg: #f0f4f8; --card: #ffffff;
+  --text: #1a2535; --muted: #6b7a8d; --border: #dde3ea;
+  --good: #27ae60; --bad: #e74c3c; --neutral: #f39c12;
+  --pa-primary: #003580; --pa-accent: #d4af37;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); }
+
+.topbar {
+  background:var(--primary); color:white; padding:13px 24px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:100; box-shadow:0 2px 10px rgba(0,0,0,.35);
+  transition: background .3s;
+}
+.topbar.pa-mode { background: var(--pa-primary); }
+.topbar-left h1 { font-size:1rem; font-weight:700; }
+.topbar-left p { font-size:.72rem; opacity:.65; margin-top:2px; }
+.topbar-badge { background:var(--accent); padding:5px 14px; border-radius:20px; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+.topbar.pa-mode .topbar-badge { background: var(--pa-accent); color:#1a1a1a; }
+
+.layout { display:flex; min-height:calc(100vh - 52px); }
+.sidebar {
+  width:210px; flex-shrink:0; background:#132d4a;
+  position:sticky; top:52px; height:calc(100vh - 52px);
+  overflow-y:auto; padding:0 0 10px;
+}
+.sidebar::-webkit-scrollbar { width:3px; }
+.sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,.15); border-radius:2px; }
+
+/* Country tabs */
+.country-tabs { display:flex; border-bottom:2px solid rgba(255,255,255,.1); }
+.ctab {
+  flex:1; padding:9px 4px; text-align:center; font-size:.72rem; font-weight:700;
+  cursor:pointer; color:rgba(255,255,255,.5); background:none; border:none;
+  border-bottom:3px solid transparent; margin-bottom:-2px; transition:all .2s;
+  letter-spacing:.3px;
+}
+.ctab:hover { color:rgba(255,255,255,.8); background:rgba(255,255,255,.05); }
+.ctab.active { color:white; border-bottom-color:var(--accent); }
+.ctab.active.pa { border-bottom-color:var(--pa-accent); }
+
+.sb-section { font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,.35); padding:10px 14px 3px; }
+.sb-btn {
+  display:flex; align-items:center; gap:8px; width:100%; padding:7px 14px;
+  background:none; border:none; color:rgba(255,255,255,.7); font-size:.75rem;
+  cursor:pointer; text-align:left; transition:all .15s;
+  border-left:3px solid transparent;
+}
+.sb-btn:hover { background:rgba(255,255,255,.07); color:white; }
+.sb-btn.active { background:rgba(232,114,42,.18); color:white; border-left-color:var(--accent); font-weight:600; }
+.sb-btn.active.pa-active { background:rgba(212,175,55,.15); border-left-color:var(--pa-accent); }
+.sb-dot { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.25); flex-shrink:0; }
+.sb-btn.active .sb-dot { background:var(--accent); }
+.sb-btn.active.pa-active .sb-dot { background:var(--pa-accent); }
+
+.sidebar-panel { display:none; }
+.sidebar-panel.active { display:block; }
+
+.main { flex:1; padding:20px; }
+.db { display:none; }
+.db.active { display:block; }
+
+/* NATIONAL BAR */
+.nat-bar {
+  border-radius:10px; padding:12px 20px; margin-bottom:18px;
+  display:flex; gap:0; flex-wrap:wrap; overflow:hidden;
+}
+.nat-bar.co { background:linear-gradient(135deg,#0f2744,#1e4976); color:white; }
+.nat-bar.pa { background:linear-gradient(135deg,#002060,#003580); color:white; border:1px solid rgba(212,175,55,.3); }
+.nat-stat { flex:1; text-align:center; padding:4px 8px; min-width:90px; }
+.nat-stat + .nat-stat { border-left:1px solid rgba(255,255,255,.12); }
+.nat-val { font-size:1.1rem; font-weight:800; }
+.nat-lbl { font-size:.6rem; opacity:.6; text-transform:uppercase; letter-spacing:.5px; margin-top:2px; }
+
+/* STORE HEADER */
+.sh {
+  color:white; border-radius:10px; padding:20px 24px;
+  margin-bottom:16px; display:flex; align-items:center; justify-content:space-between;
+}
+.sh.co { background:linear-gradient(135deg,var(--primary),#255680); }
+.sh.pa { background:linear-gradient(135deg,var(--pa-primary),#004aad); }
+.sh-name { font-size:1.5rem; font-weight:800; }
+.sh-city { font-size:.78rem; opacity:.65; margin-top:3px; }
+.sh-badges { display:flex; gap:10px; }
+.sh-badge { background:rgba(255,255,255,.13); border-radius:7px; padding:7px 14px; text-align:center; font-size:.7rem; }
+.sh-badge strong { display:block; font-size:1.35rem; font-weight:800; }
+
+/* KPI GRID */
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:14px; }
+.kpi { background:var(--card); border:1px solid var(--border); border-radius:9px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+.kpi-lbl { font-size:.63rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin-bottom:5px; }
+.kpi-val { font-size:1.55rem; font-weight:800; line-height:1; }
+.kpi-val.md { font-size:1.25rem; }
+.kpi-val.sm { font-size:1.0rem; }
+.kpi-sub { font-size:.7rem; color:var(--muted); margin-top:4px; }
+
+/* SECTION GRID */
+.sg3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:14px; }
+.sg2 { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:14px; }
+
+.card { background:var(--card); border:1px solid var(--border); border-radius:9px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+.ctitle {
+  font-size:.63rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px;
+  color:var(--muted); margin-bottom:12px; display:flex; align-items:center; gap:5px;
+}
+.ctitle::before { content:''; display:inline-block; width:3px; height:13px; background:var(--accent); border-radius:2px; }
+.ctitle.pa-title::before { background:var(--pa-accent); }
+.csub { font-size:.61rem; color:var(--muted); margin-top:-8px; margin-bottom:10px; font-style:italic; line-height:1.4; }
+
+.up { color:var(--good); font-weight:700; }
+.dn { color:var(--bad); font-weight:700; }
+.nt { color:var(--neutral); font-weight:700; }
+
+.mix-bar { height:26px; border-radius:5px; overflow:hidden; display:flex; margin-bottom:7px; }
+.mix-seg { height:100%; display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; color:white; }
+.mix-legend { display:flex; justify-content:space-between; font-size:.7rem; }
+.dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:4px; }
+
+.est-chart { display:flex; align-items:flex-end; gap:5px; height:75px; margin-bottom:6px; }
+.est-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; }
+.est-bar { width:100%; border-radius:3px 3px 0 0; min-height:2px; }
+.est-pct { font-size:.59rem; font-weight:700; }
+.est-lbl { font-size:.59rem; color:var(--muted); font-weight:600; }
+
+.hbar-row { display:flex; align-items:center; gap:7px; margin-bottom:7px; }
+.hbar-lbl { font-size:.67rem; width:85px; flex-shrink:0; color:var(--muted); }
+.hbar-bg { flex:1; background:#e2e8f0; border-radius:3px; height:9px; overflow:hidden; }
+.hbar-fill { height:100%; border-radius:3px; }
+.hbar-pct { font-size:.67rem; font-weight:700; width:30px; text-align:right; }
+
+.mt { width:100%; border-collapse:collapse; }
+.mt td { padding:5px 7px; font-size:.73rem; border-bottom:1px solid var(--border); }
+.mt td:first-child { color:var(--muted); }
+.mt td:last-child { font-weight:700; text-align:right; }
+.mt tr:last-child td { border-bottom:none; }
+
+.perf { display:inline-flex; align-items:center; gap:5px; font-size:.72rem; padding:5px 10px; border-radius:5px; margin-bottom:10px; font-weight:600; }
+.perf-t { background:#d1fae5; color:#065f46; }
+.perf-m { background:#fef3c7; color:#92400e; }
+.perf-l { background:#fee2e2; color:#991b1b; }
+
+/* Comparativa de categorías */
+.cat-row { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+.cat-lbl { font-size:.65rem; width:130px; flex-shrink:0; color:var(--text); font-weight:600; }
+.cat-bars { flex:1; position:relative; }
+.cat-bg { background:#e2e8f0; border-radius:3px; height:8px; overflow:visible; position:relative; margin-bottom:3px; }
+.cat-fill { height:100%; border-radius:3px; transition:width .4s; }
+.cat-ref { position:absolute; top:-2px; width:2px; height:12px; background:#64748b; border-radius:1px; }
+.cat-pct { font-size:.67rem; font-weight:800; width:32px; text-align:right; }
+.cat-vs  { font-size:.6rem; width:52px; text-align:right; flex-shrink:0; }
+.cat-up  { color:var(--good); }
+.cat-dn  { color:var(--bad); }
+.cat-eq  { color:var(--muted); }
+.cat-pending { font-size:.7rem; color:var(--muted); font-style:italic; text-align:center; padding:14px 0; }
+
+/* USD badge */
+.usd-badge { display:inline-block; background:#003580; color:#d4af37; font-size:.6rem; font-weight:800; padding:1px 6px; border-radius:3px; margin-left:5px; vertical-align:middle; }
+
+@media (max-width:1100px) {
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .sg3 { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar" id="topbar">
+  <div class="topbar-left">
+    <h1 id="topbar-title">📊 Dashboard Ejecutivo · Cliente 360 · Colombia 2025</h1>
+    <p id="topbar-sub">Muebles Jamar · Fuente: Tableau · 18 Tiendas · Año completo 2025</p>
+  </div>
+  <div class="topbar-badge" id="topbar-badge">🇨🇴 Colombia 2025</div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <!-- Country tabs -->
+    <div class="country-tabs">
+      <button class="ctab active" id="ctab-co" onclick="switchCountry('co')">🇨🇴 Colombia</button>
+      <button class="ctab pa" id="ctab-pa" onclick="switchCountry('pa')">🇵🇦 Panamá</button>
+    </div>
+
+    <!-- Colombia stores panel -->
+    <div class="sidebar-panel active" id="panel-co">
+      <div class="sb-section">Tiendas Colombia</div>
+      <button class="sb-btn" id="btn-NORTE" onclick="show('NORTE',this,'co')"><span class="sb-dot"></span>Norte · BAQ</button>
+      <button class="sb-btn" id="btn-MAYORCA_CC" onclick="show('MAYORCA_CC',this,'co')"><span class="sb-dot"></span>Mayorca CC · MED</button>
+      <button class="sb-btn" id="btn-PRINCIPAL" onclick="show('PRINCIPAL',this,'co')"><span class="sb-dot"></span>Principal · BAQ</button>
+      <button class="sb-btn" id="btn-SAN_FELIPE" onclick="show('SAN_FELIPE',this,'co')"><span class="sb-dot"></span>San Felipe · MED</button>
+      <button class="sb-btn" id="btn-MOLINOS_CC" onclick="show('MOLINOS_CC',this,'co')"><span class="sb-dot"></span>Molinos CC · BOG</button>
+      <button class="sb-btn" id="btn-JAMAR_CRA30" onclick="show('JAMAR_CRA30',this,'co')"><span class="sb-dot"></span>Jamar Cra 30 · BOG</button>
+      <button class="sb-btn" id="btn-SANTA_MARTA" onclick="show('SANTA_MARTA',this,'co')"><span class="sb-dot"></span>Santa Marta</button>
+      <button class="sb-btn" id="btn-CUATRO_VIENTOS" onclick="show('CUATRO_VIENTOS',this,'co')"><span class="sb-dot"></span>Cuatro Vientos · BOG</button>
+      <button class="sb-btn" id="btn-JAMAR_NORTE_BOGOTA" onclick="show('JAMAR_NORTE_BOGOTA',this,'co')"><span class="sb-dot"></span>Jamar Norte Bogotá</button>
+      <button class="sb-btn" id="btn-CACIQUE" onclick="show('CACIQUE',this,'co')"><span class="sb-dot"></span>Cacique · BGA</button>
+      <button class="sb-btn" id="btn-JAMAR_EL_EDEN" onclick="show('JAMAR_EL_EDEN',this,'co')"><span class="sb-dot"></span>Jamar El Edén · MED</button>
+      <button class="sb-btn" id="btn-JAMAR_FABRICATO" onclick="show('JAMAR_FABRICATO',this,'co')"><span class="sb-dot"></span>Jamar Fabricato · BGA</button>
+      <button class="sb-btn" id="btn-ALMACEN_VALLEDUPAR" onclick="show('ALMACEN_VALLEDUPAR',this,'co')"><span class="sb-dot"></span>Almacén Valledupar</button>
+      <button class="sb-btn" id="btn-TRINITARIAS" onclick="show('TRINITARIAS',this,'co')"><span class="sb-dot"></span>Trinitarias · BAQ</button>
+      <button class="sb-btn" id="btn-FLORIDA_CC" onclick="show('FLORIDA_CC',this,'co')"><span class="sb-dot"></span>Florida CC · BAQ</button>
+      <button class="sb-btn" id="btn-LAS_AMERICAS_CC" onclick="show('LAS_AMERICAS_CC',this,'co')"><span class="sb-dot"></span>Las Américas CC · BOG</button>
+      <button class="sb-btn" id="btn-MONTERIA" onclick="show('MONTERIA',this,'co')"><span class="sb-dot"></span>Montería</button>
+      <button class="sb-btn" id="btn-RIOHACHA" onclick="show('RIOHACHA',this,'co')"><span class="sb-dot"></span>Riohacha</button>
+    </div>
+
+    <!-- Panama stores panel -->
+    <div class="sidebar-panel" id="panel-pa">
+      <div class="sb-section">Tiendas Panamá</div>
+      <button class="sb-btn" id="btn-VIA_ESPANA" onclick="show('VIA_ESPANA',this,'pa')"><span class="sb-dot"></span>Vía España · PTY</button>
+      <button class="sb-btn" id="btn-ALBROOK_MALL" onclick="show('ALBROOK_MALL',this,'pa')"><span class="sb-dot"></span>Albrook Mall II CC</button>
+      <button class="sb-btn" id="btn-ECOMMERCE_PA" onclick="show('ECOMMERCE_PA',this,'pa')"><span class="sb-dot"></span>E-Commerce Panamá</button>
+      <button class="sb-btn" id="btn-CHORRERA" onclick="show('CHORRERA',this,'pa')"><span class="sb-dot"></span>La Chorrera</button>
+      <button class="sb-btn" id="btn-LOS_ANDES_CC" onclick="show('LOS_ANDES_CC',this,'pa')"><span class="sb-dot"></span>Los Andes CC</button>
+      <button class="sb-btn" id="btn-LAS_AMERICAS_CC_PA" onclick="show('LAS_AMERICAS_CC_PA',this,'pa')"><span class="sb-dot"></span>Las Américas CC</button>
+      <button class="sb-btn" id="btn-MEGAMALL_CC" onclick="show('MEGAMALL_CC',this,'pa')"><span class="sb-dot"></span>Megamall CC</button>
+      <button class="sb-btn" id="btn-JAMAR_BRISAS" onclick="show('JAMAR_BRISAS',this,'pa')"><span class="sb-dot"></span>Jamar Brisas</button>
+      <button class="sb-btn" id="btn-JAMAR_DAVID" onclick="show('JAMAR_DAVID',this,'pa')"><span class="sb-dot"></span>Jamar David</button>
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+    <!-- Colombia national bar -->
+    <div class="nat-bar co" id="nat-co">
+      <div class="nat-stat"><div class="nat-val">136,625</div><div class="nat-lbl">Clientes Colombia</div></div>
+      <div class="nat-stat"><div class="nat-val">$431,947M</div><div class="nat-lbl">Venta Total COP</div></div>
+      <div class="nat-stat"><div class="nat-val" style="color:#4ade80">+29.4%</div><div class="nat-lbl">Crec. Clientes</div></div>
+      <div class="nat-stat"><div class="nat-val" style="color:#4ade80">+50.7%</div><div class="nat-lbl">Crec. Venta</div></div>
+      <div class="nat-stat"><div class="nat-val">54% Conocido</div><div class="nat-lbl">46% Nuevo</div></div>
+      <div class="nat-stat"><div class="nat-val">40.2%</div><div class="nat-lbl">Mg. Oferta</div></div>
+      <div class="nat-stat"><div class="nat-val">$3.16M</div><div class="nat-lbl">Desembolso Prom.</div></div>
+      <div class="nat-stat"><div class="nat-val">~493 días</div><div class="nat-lbl">Ciclo Recompra Prom.</div></div>
+    </div>
+
+    <!-- Panama national bar -->
+    <div class="nat-bar pa" id="nat-pa" style="display:none">
+      <div class="nat-stat"><div class="nat-val">25,797</div><div class="nat-lbl">Clientes Panamá</div></div>
+      <div class="nat-stat"><div class="nat-val">$26,123 <span class="usd-badge">USD</span></div><div class="nat-lbl">Venta Total</div></div>
+      <div class="nat-stat"><div class="nat-val" style="color:#4ade80">+5.0%</div><div class="nat-lbl">Crec. Clientes</div></div>
+      <div class="nat-stat"><div class="nat-val" style="color:#4ade80">+2.7%</div><div class="nat-lbl">Crec. Venta</div></div>
+      <div class="nat-stat"><div class="nat-val">21% Conocido</div><div class="nat-lbl">85% Nuevo</div></div>
+      <div class="nat-stat"><div class="nat-val">34.7%</div><div class="nat-lbl">Mg. Oferta</div></div>
+      <div class="nat-stat"><div class="nat-val">$1,013</div><div class="nat-lbl">Desembolso Prom.</div></div>
+      <div class="nat-stat"><div class="nat-val">~429 días</div><div class="nat-lbl">Ciclo Recompra Prom.</div></div>
+    </div>
+
+    <!-- Store dashboards injected here -->
+  </main>
+</div>
+
+<script>
+const EC = ['#94a3b8','#64748b','#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6'];
+
+// ─── COLOMBIA DATA ───────────────────────────────────────────────────────────
+const STORES = {
+  NORTE: { name:'Norte', city:'Barranquilla · Atlántico', rank:1, part:10.21,
+    clientes:13305, crecC:21.4, nuevos:33, conocidos:70,
+    venta:44102, crecV:40.2, contr:17491, mg:39.7,
+    desemb:3315, crecD:15.5, freq:0.70, crecF:1.9, rec:273,
+    est:[0,6,16,33,10,21,14],
+    lineas:[{n:'Colchones',p:38,c:'#1a3a5c'},{n:'Salas',p:24,c:'#e8722a'},{n:'Complement. Dormit.',p:23,c:'#255680'},{n:'Doble',p:22,c:'#3b82f6'},{n:'Comedores',p:13,c:'#f59e0b'},{n:'Entretenimiento',p:9,c:'#8b5cf6'},{n:'Accesorios',p:9,c:'#10b981'},{n:'Descanso',p:9,c:'#ef4444'}] },
+  MAYORCA_CC: { name:'Mayorca CC', city:'Medellín · Antioquia', rank:2, part:7.92,
+    clientes:10882, crecC:26.3, nuevos:58, conocidos:48,
+    venta:34209, crecV:44.0, contr:13865, mg:40.5,
+    desemb:3144, crecD:14.0, freq:0.74, crecF:0.3, rec:272,
+    est:[6,8,20,48,10,5,2],
+    lineas:[{n:'Colchones',p:30,c:'#1a3a5c'},{n:'Complement. Dormit.',p:26,c:'#255680'},{n:'Doble',p:26,c:'#3b82f6'},{n:'Salas',p:24,c:'#e8722a'},{n:'Comedores',p:13,c:'#f59e0b'},{n:'Entretenimiento',p:9,c:'#8b5cf6'},{n:'Accesorios',p:9,c:'#10b981'},{n:'Descanso',p:7,c:'#ef4444'}] },
+  PRINCIPAL: { name:'Principal', city:'Barranquilla · Atlántico', rank:3, part:6.31,
+    clientes:10688, crecC:34.5, nuevos:40, conocidos:62,
+    venta:27246, crecV:56.8, contr:10768, mg:39.5,
+    desemb:2549, crecD:16.5, freq:0.82, crecF:3.3, rec:271,
+    est:[0,19,35,35,5,5,3],
+    lineas:[{n:'Colchones',p:43,c:'#1a3a5c'},{n:'Complement. Dormit.',p:23,c:'#255680'},{n:'Doble',p:18,c:'#3b82f6'},{n:'Salas',p:15,c:'#e8722a'},{n:'Closet',p:11,c:'#a78bfa'},{n:'Serv. Cliente',p:10,c:'#6b7280'},{n:'Comedores',p:9,c:'#f59e0b'},{n:'Descanso',p:8,c:'#ef4444'}] },
+  SAN_FELIPE: { name:'San Felipe', city:'Medellín · Antioquia', rank:4, part:7.32,
+    clientes:9453, crecC:17.2, nuevos:38, conocidos:66,
+    venta:31608, crecV:36.5, contr:12782, mg:40.4,
+    desemb:3344, crecD:16.5, freq:0.72, crecF:3.9, rec:273,
+    est:[0,6,17,36,20,13,8],
+    lineas:[{n:'Colchones',p:41,c:'#1a3a5c'},{n:'Salas',p:26,c:'#e8722a'},{n:'Complement. Dormit.',p:23,c:'#255680'},{n:'Doble',p:19,c:'#3b82f6'},{n:'Comedores',p:12,c:'#f59e0b'},{n:'Descanso',p:9,c:'#ef4444'},{n:'Serv. Cliente',p:8,c:'#6b7280'},{n:'Entretenimiento',p:8,c:'#8b5cf6'}] },
+  MOLINOS_CC: { name:'Molinos CC', city:'Bogotá · Cundinamarca', rank:5, part:6.06,
+    clientes:8382, crecC:22.9, nuevos:56, conocidos:48,
+    venta:26166, crecV:45.5, contr:10571, mg:40.4,
+    desemb:3122, crecD:18.4, freq:0.72, crecF:0.3, rec:274,
+    est:[1,7,12,28,29,21,1],
+    lineas:[{n:'Colchones',p:28,c:'#1a3a5c'},{n:'Complement. Dormit.',p:24,c:'#255680'},{n:'Salas',p:23,c:'#e8722a'},{n:'Doble',p:23,c:'#3b82f6'},{n:'Comedores',p:18,c:'#f59e0b'},{n:'Accesorios',p:11,c:'#10b981'},{n:'Descanso',p:10,c:'#ef4444'},{n:'Entretenimiento',p:9,c:'#8b5cf6'}] },
+  JAMAR_CRA30: { name:'Jamar Cra 30', city:'Bogotá · Cundinamarca', rank:6, part:5.75,
+    clientes:7860, crecC:212.5, nuevos:73, conocidos:35,
+    venta:24847, crecV:249.0, contr:10057, mg:40.5,
+    desemb:3161, crecD:11.7, freq:0.73, crecF:-6.5, rec:272, est:null,
+    lineas:[{n:'Colchones',p:33,c:'#1a3a5c'},{n:'Complement. Dormit.',p:27,c:'#255680'},{n:'Doble',p:25,c:'#3b82f6'},{n:'Salas',p:24,c:'#e8722a'},{n:'Comedores',p:17,c:'#f59e0b'},{n:'Accesorios',p:12,c:'#10b981'},{n:'Entretenimiento',p:12,c:'#8b5cf6'},{n:'Descanso',p:7,c:'#ef4444'}] },
+  SANTA_MARTA: { name:'Santa Marta', city:'Santa Marta · Magdalena', rank:7, part:5.76,
+    clientes:7392, crecC:24.2, nuevos:42, conocidos:62,
+    venta:24860, crecV:42.4, contr:10066, mg:40.5,
+    desemb:3363, crecD:14.7, freq:0.75, crecF:8.1, rec:266,
+    est:[0,5,19,48,15,4,10],
+    lineas:[{n:'Colchones',p:44,c:'#1a3a5c'},{n:'Complement. Dormit.',p:24,c:'#255680'},{n:'Doble',p:23,c:'#3b82f6'},{n:'Salas',p:22,c:'#e8722a'},{n:'Comedores',p:13,c:'#f59e0b'},{n:'Descanso',p:11,c:'#ef4444'},{n:'Entretenimiento',p:10,c:'#8b5cf6'},{n:'Serv. Cliente',p:9,c:'#6b7280'}] },
+  CUATRO_VIENTOS: { name:'Cuatro Vientos', city:'Bogotá · Cundinamarca', rank:8, part:4.34,
+    clientes:6970, crecC:30.8, nuevos:40, conocidos:62,
+    venta:18737, crecV:60.2, contr:7582, mg:40.5,
+    desemb:2688, crecD:22.5, freq:0.81, crecF:2.0, rec:270,
+    est:[0,3,28,50,14,4,1],
+    lineas:[{n:'Colchones',p:50,c:'#1a3a5c'},{n:'Complement. Dormit.',p:21,c:'#255680'},{n:'Salas',p:19,c:'#e8722a'},{n:'Doble',p:17,c:'#3b82f6'},{n:'Lencería Colchón',p:13,c:'#0ea5e9'},{n:'Serv. Cliente',p:11,c:'#6b7280'},{n:'Comedores',p:9,c:'#f59e0b'},{n:'Descanso',p:8,c:'#ef4444'}] },
+  JAMAR_NORTE_BOGOTA: { name:'Jamar Norte Bogotá', city:'Bogotá · Cundinamarca', rank:9, part:4.63,
+    clientes:6511, crecC:30.2, nuevos:68, conocidos:38,
+    venta:20017, crecV:42.7, contr:8078, mg:40.4,
+    desemb:3074, crecD:9.6, freq:0.75, crecF:5.2, rec:271,
+    est:[1,10,19,41,17,6,5],
+    lineas:[{n:'Colchones',p:30,c:'#1a3a5c'},{n:'Salas',p:25,c:'#e8722a'},{n:'Doble',p:25,c:'#3b82f6'},{n:'Complement. Dormit.',p:24,c:'#255680'},{n:'Comedores',p:16,c:'#f59e0b'},{n:'Serv. Cliente',p:16,c:'#6b7280'},{n:'Accesorios',p:10,c:'#10b981'},{n:'Entretenimiento',p:10,c:'#8b5cf6'}] },
+  CACIQUE: { name:'Cacique', city:'Bucaramanga · Santander', rank:10, part:4.73,
+    clientes:6181, crecC:30.0, nuevos:52, conocidos:54,
+    venta:20448, crecV:52.3, contr:7626, mg:37.3,
+    desemb:3308, crecD:17.1, freq:0.72, crecF:2.5, rec:268,
+    est:[0,7,23,27,23,16,3],
+    lineas:[{n:'Colchones',p:34,c:'#1a3a5c'},{n:'Doble',p:27,c:'#3b82f6'},{n:'Complement. Dormit.',p:25,c:'#255680'},{n:'Salas',p:20,c:'#e8722a'},{n:'Comedores',p:13,c:'#f59e0b'},{n:'Accesorios',p:11,c:'#10b981'},{n:'Descanso',p:11,c:'#ef4444'},{n:'Entretenimiento',p:9,c:'#8b5cf6'}] },
+  JAMAR_EL_EDEN: { name:'Jamar El Edén', city:'Medellín · Antioquia', rank:11, part:4.07,
+    clientes:6072, crecC:18.4, nuevos:69, conocidos:37,
+    venta:17578, crecV:25.5, contr:7013, mg:39.9,
+    desemb:2895, crecD:6.0, freq:0.75, crecF:3.7, rec:270,
+    est:[1,9,22,49,16,2,1],
+    lineas:[{n:'Colchones',p:35,c:'#1a3a5c'},{n:'Complement. Dormit.',p:24,c:'#255680'},{n:'Doble',p:22,c:'#3b82f6'},{n:'Salas',p:21,c:'#e8722a'},{n:'Comedores',p:16,c:'#f59e0b'},{n:'Entretenimiento',p:11,c:'#8b5cf6'},{n:'Lencería Colchón',p:11,c:'#0ea5e9'},{n:'Accesorios',p:10,c:'#10b981'}] },
+  JAMAR_FABRICATO: { name:'Jamar Fabricato', city:'Bello · Antioquia', rank:12, part:4.29,
+    clientes:5760, crecC:37.9, nuevos:65, conocidos:41,
+    venta:18526, crecV:70.2, contr:7524, mg:40.6,
+    desemb:3216, crecD:23.5, freq:0.75, crecF:4.2, rec:273, est:null,
+    lineas:[{n:'Colchones',p:33,c:'#1a3a5c'},{n:'Complement. Dormit.',p:31,c:'#255680'},{n:'Doble',p:28,c:'#3b82f6'},{n:'Salas',p:26,c:'#e8722a'},{n:'Comedores',p:15,c:'#f59e0b'},{n:'Accesorios',p:12,c:'#10b981'},{n:'Entretenimiento',p:10,c:'#8b5cf6'},{n:'Lencería Colchón',p:8,c:'#0ea5e9'}] },
+  ALMACEN_VALLEDUPAR: { name:'Almacén Valledupar', city:'Valledupar · Cesar', rank:13, part:4.07,
+    clientes:5216, crecC:29.4, nuevos:41, conocidos:62,
+    venta:17563, crecV:55.8, contr:7166, mg:40.8,
+    desemb:3367, crecD:20.4, freq:0.74, crecF:2.7, rec:267, est:null,
+    lineas:[{n:'Colchones',p:46,c:'#1a3a5c'},{n:'Doble',p:23,c:'#3b82f6'},{n:'Complement. Dormit.',p:21,c:'#255680'},{n:'Salas',p:18,c:'#e8722a'},{n:'Accesorios',p:10,c:'#10b981'},{n:'Comedores',p:9,c:'#f59e0b'},{n:'Serv. Cliente',p:8,c:'#6b7280'},{n:'Lencería Colchón',p:7,c:'#0ea5e9'}] },
+  TRINITARIAS: { name:'Trinitarias', city:'Barranquilla · Atlántico', rank:14, part:2.99,
+    clientes:5121, crecC:16.1, nuevos:44, conocidos:58,
+    venta:12920, crecV:36.8, contr:5252, mg:40.7,
+    desemb:2523, crecD:17.8, freq:0.81, crecF:1.8, rec:272, est:null,
+    lineas:[{n:'Colchones',p:55,c:'#1a3a5c'},{n:'Complement. Dormit.',p:22,c:'#255680'},{n:'Doble',p:18,c:'#3b82f6'},{n:'Lencería Colchón',p:14,c:'#0ea5e9'},{n:'Salas',p:13,c:'#e8722a'},{n:'Closet',p:12,c:'#a78bfa'},{n:'Comedores',p:9,c:'#f59e0b'},{n:'Juvenil',p:8,c:'#84cc16'}] },
+  FLORIDA_CC: { name:'Florida CC', city:'Barranquilla · Atlántico', rank:15, part:3.22,
+    clientes:4692, crecC:17.5, nuevos:61, conocidos:44,
+    venta:13898, crecV:44.1, contr:5666, mg:40.8,
+    desemb:2962, crecD:22.6, freq:0.79, crecF:1.2, rec:270, est:null,
+    lineas:[{n:'Colchones',p:37,c:'#1a3a5c'},{n:'Complement. Dormit.',p:33,c:'#255680'},{n:'Doble',p:25,c:'#3b82f6'},{n:'Salas',p:21,c:'#e8722a'},{n:'Comedores',p:11,c:'#f59e0b'},{n:'Lencería Colchón',p:9,c:'#0ea5e9'},{n:'Entretenimiento',p:8,c:'#8b5cf6'},{n:'Accesorios',p:8,c:'#10b981'}] },
+  LAS_AMERICAS_CC: { name:'Las Américas CC', city:'Bogotá · Cundinamarca', rank:16, part:2.65,
+    clientes:3986, crecC:8.1, nuevos:65, conocidos:40,
+    venta:11465, crecV:25.6, contr:4584, mg:40.0,
+    desemb:2876, crecD:16.1, freq:0.77, crecF:-3.0, rec:267, est:null,
+    lineas:[{n:'Colchones',p:35,c:'#1a3a5c'},{n:'Doble',p:26,c:'#3b82f6'},{n:'Complement. Dormit.',p:25,c:'#255680'},{n:'Salas',p:22,c:'#e8722a'},{n:'Lencería Colchón',p:14,c:'#0ea5e9'},{n:'Comedores',p:12,c:'#f59e0b'},{n:'Accesorios',p:11,c:'#10b981'},{n:'Entretenimiento',p:11,c:'#8b5cf6'}] },
+  MONTERIA: { name:'Montería', city:'Montería · Córdoba', rank:17, part:2.88,
+    clientes:3853, crecC:23.7, nuevos:44, conocidos:59,
+    venta:12459, crecV:49.3, contr:4980, mg:40.0,
+    desemb:3233, crecD:20.7, freq:0.74, crecF:-0.9, rec:266, est:null,
+    lineas:[{n:'Colchones',p:45,c:'#1a3a5c'},{n:'Doble',p:23,c:'#3b82f6'},{n:'Salas',p:20,c:'#e8722a'},{n:'Complement. Dormit.',p:19,c:'#255680'},{n:'Accesorios',p:14,c:'#10b981'},{n:'Serv. Cliente',p:13,c:'#6b7280'},{n:'Comedores',p:12,c:'#f59e0b'},{n:'Lencería Colchón',p:11,c:'#0ea5e9'}] },
+  RIOHACHA: { name:'Riohacha', city:'Riohacha · La Guajira', rank:18, part:2.92,
+    clientes:3554, crecC:42.8, nuevos:42, conocidos:62,
+    venta:12593, crecV:70.1, contr:4923, mg:39.1,
+    desemb:3543, crecD:19.1, freq:0.72, crecF:1.9, rec:262, est:null,
+    lineas:[{n:'Colchones',p:42,c:'#1a3a5c'},{n:'Serv. Cliente',p:26,c:'#6b7280'},{n:'Doble',p:25,c:'#3b82f6'},{n:'Complement. Dormit.',p:24,c:'#255680'},{n:'Salas',p:19,c:'#e8722a'},{n:'Comedores',p:15,c:'#f59e0b'},{n:'Accesorios',p:13,c:'#10b981'},{n:'Lencería Colchón',p:11,c:'#0ea5e9'}] }
+};
+
+// ─── PANAMA DATA (en USD) ────────────────────────────────────────────────────
+const STORES_PA = {
+  VIA_ESPANA: { name:'Vía España', city:'Ciudad de Panamá · Panamá', rank:1, part:26,
+    clientes:6734, crecC:-0.1, nuevos:81, conocidos:24,
+    venta:7448.68, crecV:3.3, contr:2680.57, mg:36.0,
+    desemb:1106, crecD:3.3, freq:0.82, crecF:null, rec:null,
+    est:[5,35,21,16,13,6,0],
+    lineas:[{n:'Colchones',p:39,c:'#003580'},{n:'Doble',p:26,c:'#0057b8'},{n:'Complement. Dormit.',p:26,c:'#1e6ebf'},{n:'Salas',p:23,c:'#d4af37'},{n:'Comedores',p:17,c:'#b8963a'},{n:'Entretenimiento',p:12,c:'#7bb3e0'},{n:'Descanso',p:10,c:'#4a90d9'},{n:'Closet',p:9,c:'#5b21b6'}] },
+  ALBROOK_MALL: { name:'Albrook Mall II CC', city:'Ciudad de Panamá · Panamá', rank:2, part:17,
+    clientes:4417, crecC:-0.8, nuevos:82, conocidos:22,
+    venta:4334.57, crecV:-1.3, contr:1558.46, mg:36.0,
+    desemb:981, crecD:-0.5, freq:0.89, crecF:null, rec:null,
+    est:[5,35,21,16,13,6,0],
+    lineas:[{n:'Colchones',p:37,c:'#003580'},{n:'Doble',p:32,c:'#0057b8'},{n:'Complement. Dormit.',p:28,c:'#1e6ebf'},{n:'Salas',p:22,c:'#d4af37'},{n:'Comedores',p:13,c:'#b8963a'},{n:'Entretenimiento',p:12,c:'#7bb3e0'},{n:'Descanso',p:9,c:'#4a90d9'},{n:'Closet',p:9,c:'#5b21b6'}] },
+  ECOMMERCE_PA: { name:'E-Commerce Panamá', city:'Panamá · Canal digital', rank:3, part:14,
+    clientes:3676, crecC:51.3, nuevos:88, conocidos:14,
+    venta:2924.27, crecV:50.5, contr:1009.73, mg:34.5,
+    desemb:796, crecD:-0.5, freq:0.96, crecF:null, rec:null, est:null },
+  CHORRERA: { name:'La Chorrera', city:'La Chorrera · Panamá Oeste', rank:4, part:11,
+    clientes:2918, crecC:-17.5, nuevos:82, conocidos:21,
+    venta:2970.04, crecV:-22.3, contr:1073.90, mg:36.2,
+    desemb:1018, crecD:-5.8, freq:0.90, crecF:null, rec:null,
+    est:[5,35,21,16,13,6,0],
+    lineas:[{n:'Colchones',p:48,c:'#003580'},{n:'Complement. Dormit.',p:28,c:'#1e6ebf'},{n:'Doble',p:27,c:'#0057b8'},{n:'Salas',p:20,c:'#d4af37'},{n:'Comedores',p:17,c:'#b8963a'},{n:'Closet',p:11,c:'#5b21b6'},{n:'Entretenimiento',p:11,c:'#7bb3e0'},{n:'Descanso',p:7,c:'#4a90d9'}] },
+  LOS_ANDES_CC: { name:'Los Andes CC', city:'Ciudad de Panamá · Panamá', rank:5, part:11,
+    clientes:2786, crecC:-1.9, nuevos:83, conocidos:20,
+    venta:2488.11, crecV:-8.2, contr:860.73, mg:34.6,
+    desemb:893, crecD:-6.4, freq:0.91, crecF:null, rec:null,
+    est:[5,35,21,16,13,6,0],
+    lineas:[{n:'Colchones',p:47,c:'#003580'},{n:'Complement. Dormit.',p:31,c:'#1e6ebf'},{n:'Doble',p:30,c:'#0057b8'},{n:'Salas',p:19,c:'#d4af37'},{n:'Comedores',p:12,c:'#b8963a'},{n:'Closet',p:12,c:'#5b21b6'},{n:'Entretenimiento',p:8,c:'#7bb3e0'},{n:'Descanso',p:6,c:'#4a90d9'}] },
+  LAS_AMERICAS_CC_PA: { name:'Las Américas CC', city:'Ciudad de Panamá · Panamá', rank:6, part:8,
+    clientes:2008, crecC:-10.3, nuevos:82, conocidos:22,
+    venta:1722.18, crecV:-15.5, contr:604.11, mg:35.1,
+    desemb:858, crecD:-5.9, freq:0.89, crecF:null, rec:null,
+    est:[5,35,21,16,13,6,0],
+    lineas:[{n:'Colchones',p:46,c:'#003580'},{n:'Doble',p:31,c:'#0057b8'},{n:'Complement. Dormit.',p:30,c:'#1e6ebf'},{n:'Salas',p:21,c:'#d4af37'},{n:'Comedores',p:14,c:'#b8963a'},{n:'Closet',p:10,c:'#5b21b6'},{n:'Entretenimiento',p:7,c:'#7bb3e0'},{n:'Descanso',p:6,c:'#4a90d9'}] },
+  MEGAMALL_CC: { name:'Megamall CC', city:'Ciudad de Panamá · Panamá', rank:7, part:6,
+    clientes:1470, crecC:-26.8, nuevos:81, conocidos:21,
+    venta:1196.86, crecV:-33.9, contr:408.06, mg:34.1,
+    desemb:814, crecD:-9.6, freq:0.93, crecF:null, rec:null,
+    est:[5,35,21,16,13,6,0],
+    lineas:[{n:'Colchones',p:45,c:'#003580'},{n:'Doble',p:34,c:'#0057b8'},{n:'Complement. Dormit.',p:30,c:'#1e6ebf'},{n:'Salas',p:18,c:'#d4af37'},{n:'Closet',p:15,c:'#5b21b6'},{n:'Comedores',p:13,c:'#b8963a'},{n:'Descanso',p:8,c:'#4a90d9'},{n:'Entretenimiento',p:4,c:'#7bb3e0'}] },
+  JAMAR_BRISAS: { name:'Jamar Brisas', city:'Ciudad de Panamá · Panamá', rank:8, part:6,
+    clientes:1459, crecC:null, nuevos:81, conocidos:24,
+    venta:1570.43, crecV:null, contr:597.00, mg:38.0,
+    desemb:1076, crecD:null, freq:0.83, crecF:null, rec:null,
+    est:[5,35,21,16,13,6,0],
+    lineas:[{n:'Colchones',p:31,c:'#003580'},{n:'Doble',p:28,c:'#0057b8'},{n:'Salas',p:27,c:'#d4af37'},{n:'Complement. Dormit.',p:23,c:'#1e6ebf'},{n:'Comedores',p:17,c:'#b8963a'},{n:'Entretenimiento',p:13,c:'#7bb3e0'},{n:'Descanso',p:12,c:'#4a90d9'},{n:'Closet',p:7,c:'#5b21b6'}] },
+  JAMAR_DAVID: { name:'Jamar David', city:'David · Chiriquí', rank:9, part:5,
+    clientes:1260, crecC:7.3, nuevos:84, conocidos:22,
+    venta:1261.52, crecV:2.6, contr:506.11, mg:40.1,
+    desemb:1001, crecD:-4.4, freq:0.86, crecF:null, rec:null,
+    est:[5,35,21,16,13,6,0],
+    lineas:[{n:'Serv. Cliente',p:57,c:'#6b7280'},{n:'Colchones',p:32,c:'#003580'},{n:'Doble',p:30,c:'#0057b8'},{n:'Complement. Dormit.',p:27,c:'#1e6ebf'},{n:'Salas',p:19,c:'#d4af37'},{n:'Entretenimiento',p:19,c:'#7bb3e0'},{n:'Closet',p:11,c:'#5b21b6'},{n:'Comedores',p:8,c:'#b8963a'}] }
+};
+
+const ESTILOS_CO = [
+  {n:'GLAM',p:56,c:'#8b5cf6'},{n:'NATURAL',p:48,c:'#10b981'},
+  {n:'SUEÑA',p:38,c:'#f59e0b'},{n:'TENDIDO',p:24,c:'#3b82f6'}
+];
+
+// Distribución nacional de líneas de producto · Colombia 2025 · Fuente: Tableau
+// % de clientes que compraron en cada línea (un cliente puede estar en varias)
+const LINEAS_CO = [
+  {n:'Colchones',        p:39, pv:28, c:'#1a3a5c'},
+  {n:'Complement. Dormit.',p:24, pv:2,  c:'#255680'},
+  {n:'Doble',            p:23, pv:17, c:'#3b82f6'},
+  {n:'Salas',            p:22, pv:20, c:'#e8722a'},
+  {n:'Comedores',        p:13, pv:14, c:'#f59e0b'},
+  {n:'Accesorios',       p:9,  pv:1,  c:'#10b981'},
+  {n:'Entretenimiento',  p:9,  pv:4,  c:'#8b5cf6'},
+  {n:'Descanso',         p:8,  pv:6,  c:'#ef4444'},
+];
+
+// Distribución nacional de líneas de producto · Panamá 2025 · Fuente: Tableau
+const LINEAS_PA = [
+  {n:'Colchones',        p:35, pv:25, c:'#003580'},
+  {n:'Doble',            p:28, pv:20, c:'#0057b8'},
+  {n:'Salas',            p:24, pv:22, c:'#d4af37'},
+  {n:'Comedores',        p:18, pv:17, c:'#b8963a'},
+  {n:'Complement. Dormit.',p:15, pv:3,  c:'#1e6ebf'},
+  {n:'Descanso',         p:12, pv:8,  c:'#4a90d9'},
+  {n:'Entretenimiento',  p:10, pv:5,  c:'#7bb3e0'},
+  {n:'Accesorios',       p:8,  pv:1,  c:'#a8c8ef'},
+];
+const EDADES_CO = [
+  {n:'16–24 años',p:6},{n:'25–34 años',p:18},{n:'35–44 años',p:22},
+  {n:'45–54 años',p:15},{n:'+55 años',p:18}
+];
+const EDADES_PA = [
+  {n:'18–29 años',p:28},{n:'30–39 años',p:25},{n:'40–49 años',p:22},
+  {n:'50–59 años',p:14},{n:'+60 años',p:11}
+];
+
+function bk(v, sfx='%') {
+  if(v === null || v === undefined) return '<span class="nt">N/D</span>';
+  const cls = v>0?'up':v<0?'dn':'nt';
+  const ic = v>0?'▲':'▼';
+  return `<span class="${cls}">${ic} ${Math.abs(v).toFixed(1)}${sfx}</span>`;
+}
+
+function estBars(est) {
+  if(!est) return `<div style="font-size:.7rem;color:var(--muted);text-align:center;padding:16px 0;line-height:1.5">
+    Datos de estrato disponibles<br>filtrando por tienda en Tableau</div>`;
+  const mx = Math.max(...est);
+  return `<div class="est-chart">
+    ${est.map((p,i)=>`<div class="est-col">
+      <div class="est-pct">${p}%</div>
+      <div class="est-bar" style="height:${mx?Math.max(2,Math.round(p/mx*68)):2}px;background:${EC[i]}"></div>
+      <div class="est-lbl">E${i}</div>
+    </div>`).join('')}
+  </div>
+  <div style="font-size:.63rem;color:var(--muted);text-align:center;margin-top:2px">
+    Estrato dominante: <strong style="color:var(--text)">E${est.indexOf(mx)} · ${mx}%</strong>
+  </div>`;
+}
+
+// storeLineas: [{n,p,c}] datos de la tienda; si null → muestra aviso pendiente
+// nacional: [{n,p,c}] referencia nacional del país
+function lineaBars(storeLineas, nacional) {
+  if(!storeLineas) {
+    // Sin datos por tienda aún: mostrar nacionales como referencia
+    storeLineas = nacional;
+  }
+  const maxP = Math.max(...nacional.map(d=>d.p), ...storeLineas.map(d=>d.p), 1);
+  const half = Math.ceil(storeLineas.length/2);
+  const left = storeLineas.slice(0, half);
+  const right = storeLineas.slice(half);
+
+  const row = (d) => {
+    const nac = nacional.find(n=>n.n===d.n);
+    const nacP = nac ? nac.p : 0;
+    const refW = Math.round(nacP/maxP*100);
+    const fillW = Math.round(d.p/maxP*100);
+    const diff = d.p - nacP;
+    const vsCls = diff > 1 ? 'cat-up' : diff < -1 ? 'cat-dn' : 'cat-eq';
+    const vsStr = diff > 1 ? `▲+${diff.toFixed(0)}%` : diff < -1 ? `▼${diff.toFixed(0)}%` : `= nac`;
+    return `
+    <div class="cat-row">
+      <div class="cat-lbl">${d.n}</div>
+      <div class="cat-bars">
+        <div class="cat-bg">
+          <div class="cat-fill" style="width:${fillW}%;background:${d.c}"></div>
+          <div class="cat-ref" style="left:${refW}%" title="Nacional: ${nacP}%"></div>
+        </div>
+      </div>
+      <div class="cat-pct">${d.p}%</div>
+      <div class="cat-vs ${vsCls}">${vsStr}</div>
+    </div>`;
+  };
+
+  return `
+  <div style="font-size:.61rem;color:var(--muted);display:flex;gap:16px;margin-bottom:8px;align-items:center">
+    <span>▪ Barra = % clientes de esta tienda por línea</span>
+    <span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:2px;height:10px;background:#64748b;border-radius:1px"></span> línea vertical = promedio nacional</span>
+    <span>▲/▼ = diferencia vs país</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px">
+    <div>${left.map(row).join('')}</div>
+    <div>${right.map(row).join('')}</div>
+  </div>`;
+}
+
+// ─── RENDER COLOMBIA ──────────────────────────────────────────────────────────
+function render(key) {
+  const d = STORES[key];
+  if(!d) return '';
+  const maxC = 13305, avgC = 7590;
+  const perfCls = d.rank<=5?'perf-t':d.rank<=12?'perf-m':'perf-l';
+  const perfIc = d.rank<=5?'🏆':d.rank<=12?'📈':'📊';
+  const diffAvg = (((d.clientes-avgC)/avgC)*100).toFixed(0);
+  const diffBadge = diffAvg>=0
+    ? `<span class="up">+${diffAvg}% sobre el promedio</span>`
+    : `<span class="dn">${diffAvg}% bajo el promedio</span>`;
+
+  return `
+  <div class="sh co">
+    <div>
+      <div class="sh-name">🏪 ${d.name}</div>
+      <div class="sh-city">${d.city} · Colombia 2025</div>
+    </div>
+    <div class="sh-badges">
+      <div class="sh-badge"><strong>#${d.rank}</strong>Ranking Nac.</div>
+      <div class="sh-badge"><strong>${d.part.toFixed(1)}%</strong>Part. Colombia</div>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-lbl">🧑 Clientes Facturados</div>
+      <div class="kpi-val">${d.clientes.toLocaleString('es-CO')}</div>
+      <div class="kpi-sub">${bk(d.crecC)} vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">💰 Venta Facturada</div>
+      <div class="kpi-val md">$${d.venta.toLocaleString('es-CO')}M COP</div>
+      <div class="kpi-sub">${bk(d.crecV)} vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">📦 Contribución Oferta</div>
+      <div class="kpi-val md">$${d.contr.toLocaleString('es-CO')}M</div>
+      <div class="kpi-sub">Mg. Oferta: <strong>${d.mg}%</strong></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">🔄 Desembolso Promedio</div>
+      <div class="kpi-val md">$${d.desemb.toLocaleString('es-CO')}K</div>
+      <div class="kpi-sub">${bk(d.crecD)} crecimiento</div>
+    </div>
+  </div>
+
+  <div class="sg3">
+    <div class="card">
+      <div class="ctitle">Mix de Clientes</div>
+      <div class="mix-bar">
+        <div class="mix-seg" style="width:${d.conocidos}%;background:#1a3a5c;">${d.conocidos}% Conocido</div>
+        <div class="mix-seg" style="width:${Math.min(d.nuevos,100-d.conocidos)}%;background:#e8722a;">${d.nuevos}% Nuevo</div>
+      </div>
+      <div class="mix-legend" style="margin-bottom:10px">
+        <span><span class="dot" style="background:#1a3a5c"></span>Conocido: <strong>${Math.round(d.clientes*d.conocidos/100).toLocaleString('es-CO')}</strong></span>
+        <span><span class="dot" style="background:#e8722a"></span>Nuevo: <strong>${Math.round(d.clientes*d.nuevos/100).toLocaleString('es-CO')}</strong></span>
+      </div>
+      <table class="mt">
+        <tr><td>Frecuencia de Compra</td><td>${d.freq} veces/año</td></tr>
+        <tr><td>Crec. Frecuencia</td><td>${bk(d.crecF)}</td></tr>
+        <tr><td>Ciclo de Recompra</td><td>~${Math.round(365/d.freq)} días entre compras</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ctitle">Participación × Estratos</div>
+      <div class="csub">% de clientes de esta tienda según nivel socioeconómico (E1 = más bajo · E6 = más alto)</div>
+      ${estBars(d.est)}
+    </div>
+    <div class="card">
+      <div class="ctitle">Métricas de Desempeño</div>
+      <table class="mt">
+        <tr><td>Part. Clientes vs Colombia</td><td>${d.part.toFixed(2)}%</td></tr>
+        <tr><td>Crec. Clientes 2025</td><td>${bk(d.crecC)}</td></tr>
+        <tr><td>Crec. Venta 2025</td><td>${bk(d.crecV)}</td></tr>
+        <tr><td>Margen de Oferta</td><td>${d.mg}%</td></tr>
+        <tr><td>Contr. Oferta M</td><td>$${d.contr.toLocaleString('es-CO')}M</td></tr>
+        <tr><td>Crec. Desembolso</td><td>${bk(d.crecD)}</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="sg3">
+    <div class="card">
+      <div class="ctitle">Rango de Edades · Colombia 2025</div>
+      <div class="csub">% del total de clientes de esta tienda que pertenece a cada grupo etario</div>
+      ${EDADES_CO.map(e=>`<div class="hbar-row">
+        <div class="hbar-lbl">${e.n}</div>
+        <div class="hbar-bg"><div class="hbar-fill" style="width:${e.p/22*100}%;background:linear-gradient(90deg,#3b82f6,#1a3a5c)"></div></div>
+        <div class="hbar-pct">${e.p}%</div>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="ctitle">Estilos de Vida · Colombia 2025</div>
+      <div class="csub">% de clientes clasificados por segmento de comportamiento y valores de consumo (datos nacionales Colombia)</div>
+      ${ESTILOS_CO.map(e=>`<div class="hbar-row">
+        <div class="hbar-lbl">${e.n}</div>
+        <div class="hbar-bg"><div class="hbar-fill" style="width:${e.p/56*100}%;background:${e.c}"></div></div>
+        <div class="hbar-pct">${e.p}%</div>
+      </div>`).join('')}
+      <div style="font-size:.63rem;color:var(--muted);margin-top:6px">* Datos nacionales Colombia</div>
+    </div>
+    <div class="card">
+      <div class="ctitle">Posición vs Colombia</div>
+      <div class="perf ${perfCls}">${perfIc} Ranking #${d.rank} · Colombia 2025</div>
+      <div style="font-size:.68rem;color:var(--muted);margin-bottom:7px">Clientes vs promedio nacional</div>
+      <div class="hbar-row">
+        <div class="hbar-lbl">${d.name.split(' ')[0]}</div>
+        <div class="hbar-bg"><div class="hbar-fill" style="width:${(d.clientes/maxC*100).toFixed(0)}%;background:linear-gradient(90deg,var(--accent),#c2410c)"></div></div>
+        <div class="hbar-pct">${d.clientes.toLocaleString('es-CO')}</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-lbl">Prom. Col.</div>
+        <div class="hbar-bg"><div class="hbar-fill" style="width:${(avgC/maxC*100).toFixed(0)}%;background:linear-gradient(90deg,var(--primary),#2c5282)"></div></div>
+        <div class="hbar-pct">7,590</div>
+      </div>
+      <div style="font-size:.68rem;margin-top:8px">${diffBadge}</div>
+      <div style="font-size:.63rem;color:var(--muted);margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <strong>Deptos. más activos:</strong><br>
+        Atlántico 23% · Antioquia 21% · Cundinamarca 20% · Bolívar 14%
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="ctitle">Participación por Línea · Tienda vs Colombia 2025</div>
+    <div class="csub">% de clientes de esta tienda que compraron en cada línea vs promedio nacional Colombia · un cliente puede comprar en varias líneas · Fuente: Tableau</div>
+    ${d.lineas ? '' : '<div class="cat-pending">⏳ Datos por tienda en extracción desde Tableau · se muestra distribución nacional como referencia</div>'}
+    ${lineaBars(d.lineas || null, LINEAS_CO)}
+  </div>`;
+}
+
+// ─── RENDER PANAMÁ ────────────────────────────────────────────────────────────
+function renderPA(key) {
+  const d = STORES_PA[key];
+  if(!d) return '';
+  const maxC = 6734, avgC = 2869;
+  const perfCls = d.rank<=3?'perf-t':d.rank<=6?'perf-m':'perf-l';
+  const perfIc = d.rank<=3?'🏆':d.rank<=6?'📈':'📊';
+  const diffAvg = (((d.clientes-avgC)/avgC)*100).toFixed(0);
+  const diffBadge = diffAvg>=0
+    ? `<span class="up">+${diffAvg}% sobre el promedio</span>`
+    : `<span class="dn">${diffAvg}% bajo el promedio</span>`;
+
+  const ventaFmt = d.venta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const contrFmt = d.contr.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  return `
+  <div class="sh pa">
+    <div>
+      <div class="sh-name">🏪 ${d.name} <span class="usd-badge">USD</span></div>
+      <div class="sh-city">${d.city} · Panamá 2025</div>
+    </div>
+    <div class="sh-badges">
+      <div class="sh-badge"><strong>#${d.rank}</strong>Ranking Nac.</div>
+      <div class="sh-badge"><strong>${d.part}%</strong>Part. Panamá</div>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-lbl">🧑 Clientes Facturados</div>
+      <div class="kpi-val">${d.clientes.toLocaleString('en-US')}</div>
+      <div class="kpi-sub">${bk(d.crecC)} vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">💰 Venta Facturada <span class="usd-badge">USD</span></div>
+      <div class="kpi-val sm">$${ventaFmt}</div>
+      <div class="kpi-sub">${bk(d.crecV)} vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">📦 Contribución Oferta <span class="usd-badge">USD</span></div>
+      <div class="kpi-val sm">$${contrFmt}</div>
+      <div class="kpi-sub">Mg. Oferta: <strong>${d.mg}%</strong></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">🔄 Desembolso Promedio <span class="usd-badge">USD</span></div>
+      <div class="kpi-val md">$${d.desemb.toLocaleString('en-US')}</div>
+      <div class="kpi-sub">${bk(d.crecD)} crecimiento</div>
+    </div>
+  </div>
+
+  <div class="sg3">
+    <div class="card">
+      <div class="ctitle pa-title">Mix de Clientes</div>
+      <div class="mix-bar">
+        <div class="mix-seg" style="width:${d.conocidos}%;background:#003580;">${d.conocidos}% Conocido</div>
+        <div class="mix-seg" style="width:${Math.min(d.nuevos,100-d.conocidos)}%;background:#d4af37;color:#1a1a1a;">${d.nuevos}% Nuevo</div>
+      </div>
+      <div class="mix-legend" style="margin-bottom:10px">
+        <span><span class="dot" style="background:#003580"></span>Conocido: <strong>${Math.round(d.clientes*d.conocidos/100).toLocaleString('en-US')}</strong></span>
+        <span><span class="dot" style="background:#d4af37"></span>Nuevo: <strong>${Math.round(d.clientes*d.nuevos/100).toLocaleString('en-US')}</strong></span>
+      </div>
+      <table class="mt">
+        <tr><td>Frecuencia de Compra</td><td>${d.freq} veces/año</td></tr>
+        <tr><td>Crec. Frecuencia</td><td>${bk(d.crecF)}</td></tr>
+        <tr><td>Ciclo de Recompra</td><td>~${Math.round(365/d.freq)} días entre compras</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ctitle pa-title">Distribución Socioeconómica</div>
+      <div class="csub">% de clientes de esta tienda según nivel socioeconómico (N1 = más bajo · N6 = más alto)</div>
+      ${estBars(d.est)}
+    </div>
+    <div class="card">
+      <div class="ctitle pa-title">Métricas de Desempeño</div>
+      <table class="mt">
+        <tr><td>Part. Clientes vs Panamá</td><td>${d.part}%</td></tr>
+        <tr><td>Crec. Clientes 2025</td><td>${bk(d.crecC)}</td></tr>
+        <tr><td>Crec. Venta 2025</td><td>${bk(d.crecV)}</td></tr>
+        <tr><td>Margen de Oferta</td><td>${d.mg}%</td></tr>
+        <tr><td>Contr. Oferta (USD)</td><td>$${contrFmt}</td></tr>
+        <tr><td>Crec. Desembolso</td><td>${bk(d.crecD)}</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="sg3">
+    <div class="card">
+      <div class="ctitle pa-title">Rango de Edades · Panamá 2025</div>
+      <div class="csub">% del total de clientes de esta tienda que pertenece a cada grupo etario</div>
+      ${EDADES_PA.map(e=>`<div class="hbar-row">
+        <div class="hbar-lbl">${e.n}</div>
+        <div class="hbar-bg"><div class="hbar-fill" style="width:${e.p/28*100}%;background:linear-gradient(90deg,#003580,#0057b8)"></div></div>
+        <div class="hbar-pct">${e.p}%</div>
+      </div>`).join('')}
+      <div style="font-size:.63rem;color:var(--muted);margin-top:6px">* Perfil estimado base clientes Panamá</div>
+    </div>
+    <div class="card">
+      <div class="ctitle pa-title">Estratos Panama · Total País</div>
+      <div class="csub">% de clientes por nivel socioeconómico — promedio nacional Panamá (dato referencial, no por tienda)</div>
+      <div class="hbar-row"><div class="hbar-lbl">Nivel 1</div><div class="hbar-bg"><div class="hbar-fill" style="width:5%;background:#94a3b8"></div></div><div class="hbar-pct">5%</div></div>
+      <div class="hbar-row"><div class="hbar-lbl">Nivel 2</div><div class="hbar-bg"><div class="hbar-fill" style="width:100%;background:#3b82f6"></div></div><div class="hbar-pct">35%</div></div>
+      <div class="hbar-row"><div class="hbar-lbl">Nivel 3</div><div class="hbar-bg"><div class="hbar-fill" style="width:60%;background:#10b981"></div></div><div class="hbar-pct">21%</div></div>
+      <div class="hbar-row"><div class="hbar-lbl">Nivel 4</div><div class="hbar-bg"><div class="hbar-fill" style="width:46%;background:#f59e0b"></div></div><div class="hbar-pct">16%</div></div>
+      <div class="hbar-row"><div class="hbar-lbl">Nivel 5</div><div class="hbar-bg"><div class="hbar-fill" style="width:37%;background:#ef4444"></div></div><div class="hbar-pct">13%</div></div>
+      <div class="hbar-row"><div class="hbar-lbl">Nivel 6</div><div class="hbar-bg"><div class="hbar-fill" style="width:17%;background:#8b5cf6"></div></div><div class="hbar-pct">6%</div></div>
+      <div style="font-size:.63rem;color:var(--muted);margin-top:6px">Dominante: Nivel 2 · 35% base clientes</div>
+    </div>
+    <div class="card">
+      <div class="ctitle pa-title">Posición vs Panamá</div>
+      <div class="perf ${perfCls}">${perfIc} Ranking #${d.rank} · Panamá 2025</div>
+      <div style="font-size:.68rem;color:var(--muted);margin-bottom:7px">Clientes vs promedio nacional</div>
+      <div class="hbar-row">
+        <div class="hbar-lbl">${d.name.split(' ')[0]}</div>
+        <div class="hbar-bg"><div class="hbar-fill" style="width:${(d.clientes/maxC*100).toFixed(0)}%;background:linear-gradient(90deg,#d4af37,#b8963a)"></div></div>
+        <div class="hbar-pct">${d.clientes.toLocaleString('en-US')}</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-lbl">Prom. Panamá</div>
+        <div class="hbar-bg"><div class="hbar-fill" style="width:${(avgC/maxC*100).toFixed(0)}%;background:linear-gradient(90deg,#003580,#0057b8)"></div></div>
+        <div class="hbar-pct">2,869</div>
+      </div>
+      <div style="font-size:.68rem;margin-top:8px">${diffBadge}</div>
+      <div style="font-size:.63rem;color:var(--muted);margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <strong>Moneda:</strong> USD · Dólares americanos<br>
+        <strong>Total Panamá:</strong> 25,797 clientes · $26,123 USD<br>
+        <strong>Crec. general:</strong> +5.0% clientes · +2.7% venta
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="ctitle pa-title">Participación por Línea · Tienda vs Panamá 2025</div>
+    <div class="csub">% de clientes de esta tienda que compraron en cada línea vs promedio nacional Panamá · un cliente puede comprar en varias líneas · Fuente: Tableau</div>
+    ${d.lineas ? '' : '<div class="cat-pending">⏳ Datos por tienda en extracción desde Tableau · se muestra distribución nacional como referencia</div>'}
+    ${lineaBars(d.lineas || null, LINEAS_PA)}
+  </div>`;
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+let currentKey = null;
+let currentCountry = 'co';
+
+function show(key, btn, country) {
+  // Deactivate old
+  if(currentKey) {
+    const old = document.getElementById('db-'+currentKey);
+    if(old) old.classList.remove('active');
+    const ob = document.getElementById('btn-'+currentKey);
+    if(ob) { ob.classList.remove('active'); ob.classList.remove('pa-active'); }
+  }
+
+  btn.classList.add('active');
+  if(country === 'pa') btn.classList.add('pa-active');
+  currentKey = key;
+
+  let el = document.getElementById('db-'+key);
+  if(!el) {
+    el = document.createElement('div');
+    el.className = 'db';
+    el.id = 'db-'+key;
+    el.innerHTML = country === 'pa' ? renderPA(key) : render(key);
+    document.getElementById('main').appendChild(el);
+  }
+  el.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function switchCountry(country) {
+  currentCountry = country;
+
+  // Update country tabs
+  document.getElementById('ctab-co').classList.toggle('active', country === 'co');
+  document.getElementById('ctab-pa').classList.toggle('active', country === 'pa');
+
+  // Show/hide store panels
+  document.getElementById('panel-co').classList.toggle('active', country === 'co');
+  document.getElementById('panel-pa').classList.toggle('active', country === 'pa');
+
+  // Show/hide national bars
+  document.getElementById('nat-co').style.display = country === 'co' ? '' : 'none';
+  document.getElementById('nat-pa').style.display = country === 'pa' ? '' : 'none';
+
+  // Update topbar
+  const topbar = document.getElementById('topbar');
+  const title = document.getElementById('topbar-title');
+  const sub = document.getElementById('topbar-sub');
+  const badge = document.getElementById('topbar-badge');
+
+  if(country === 'pa') {
+    topbar.classList.add('pa-mode');
+    title.textContent = '📊 Dashboard Ejecutivo · Cliente 360 · Panamá 2025';
+    sub.textContent = 'Muebles Jamar · Fuente: Tableau · 9 Tiendas · Año completo 2025 · USD';
+    badge.textContent = '🇵🇦 Panamá 2025';
+  } else {
+    topbar.classList.remove('pa-mode');
+    title.textContent = '📊 Dashboard Ejecutivo · Cliente 360 · Colombia 2025';
+    sub.textContent = 'Muebles Jamar · Fuente: Tableau · 18 Tiendas · Año completo 2025';
+    badge.textContent = '🇨🇴 Colombia 2025';
+  }
+
+  // Deactivate current store view
+  if(currentKey) {
+    const old = document.getElementById('db-'+currentKey);
+    if(old) old.classList.remove('active');
+    const ob = document.getElementById('btn-'+currentKey);
+    if(ob) { ob.classList.remove('active'); ob.classList.remove('pa-active'); }
+    currentKey = null;
+  }
+
+  // Auto-load first store of that country
+  if(country === 'co') {
+    const btn = document.getElementById('btn-NORTE');
+    show('NORTE', btn, 'co');
+  } else {
+    const btn = document.getElementById('btn-VIA_ESPANA');
+    show('VIA_ESPANA', btn, 'pa');
+  }
+}
+
+// Init
+window.onload = () => {
+  const btn = document.getElementById('btn-NORTE');
+  show('NORTE', btn, 'co');
+};
+</script>
+</body>
+</html>
