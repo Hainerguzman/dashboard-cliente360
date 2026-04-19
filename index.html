@@ -260,6 +260,9 @@ body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:
 
 <script>
 const EC = ['#94a3b8','#64748b','#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6'];
+// Clasificación de Riesgo colors: [Alto, Bajo, Medio, MuyAlto, MuyBajo, SinClasif, T5]
+const RC = ['#ef4444','#10b981','#f59e0b','#b91c1c','#059669','#94a3b8','#1a3a5c'];
+const RN = ['Alto','Bajo','Medio','Muy Alto','Muy Bajo','Sin Clasif.','T5'];
 
 // ─── COLOMBIA DATA ───────────────────────────────────────────────────────────
 const STORES = {
@@ -267,116 +270,116 @@ const STORES = {
     clientes:13305, crecC:21.4, nuevos:33, conocidos:70,
     venta:44102, crecV:40.2, contr:17491, mg:39.7,
     desemb:3315, crecD:15.5, freq:0.70, crecF:1.9, rec:273,
-    est:[0,6,16,33,10,21,14],
+    est:[0,6,16,33,10,21,14], riesgo:[15,10,23,5,9,46,2],
     lineas:[{n:'Colchones',p:36,c:'#1a3a5c'},{n:'Salas',p:29,c:'#e8722a'},{n:'Doble',p:24,c:'#3b82f6'},{n:'Complement. Dormit.',p:23,c:'#255680'},{n:'Comedores',p:18,c:'#f59e0b'},{n:'Accesorios',p:12,c:'#10b981'},{n:'Descanso',p:12,c:'#ef4444'},{n:'Entretenimiento',p:10,c:'#8b5cf6'}] },
   MAYORCA_CC: { name:'Mayorca CC', city:'Medellín · Antioquia', rank:2, part:7.92,
     clientes:10882, crecC:26.3, nuevos:58, conocidos:48,
     venta:34209, crecV:44.0, contr:13865, mg:40.5,
     desemb:3144, crecD:14.0, freq:0.74, crecF:0.3, rec:272,
-    est:[6,8,20,48,10,5,2],
+    est:[6,8,20,48,10,5,2], riesgo:[17,9,24,5,11,41,1],
     lineas:[{n:'Salas',p:30,c:'#e8722a'},{n:'Doble',p:29,c:'#3b82f6'},{n:'Colchones',p:29,c:'#1a3a5c'},{n:'Complement. Dormit.',p:28,c:'#255680'},{n:'Comedores',p:18,c:'#f59e0b'},{n:'Accesorios',p:13,c:'#10b981'},{n:'Descanso',p:10,c:'#ef4444'},{n:'Entretenimiento',p:9,c:'#8b5cf6'}] },
   PRINCIPAL: { name:'Principal', city:'Barranquilla · Atlántico', rank:3, part:6.31,
     clientes:10688, crecC:34.5, nuevos:40, conocidos:62,
     venta:27246, crecV:56.8, contr:10768, mg:39.5,
     desemb:2549, crecD:16.5, freq:0.82, crecF:3.3, rec:271,
-    est:[0,19,35,35,5,5,3],
+    est:[0,19,35,35,5,5,3], riesgo:[20,6,29,4,5,36,2],
     lineas:[{n:'Colchones',p:39,c:'#1a3a5c'},{n:'Complement. Dormit.',p:21,c:'#255680'},{n:'Salas',p:21,c:'#e8722a'},{n:'Doble',p:18,c:'#3b82f6'},{n:'Comedores',p:15,c:'#f59e0b'},{n:'Closet',p:9,c:'#a78bfa'},{n:'Accesorios',p:9,c:'#10b981'},{n:'Serv. Cliente',p:9,c:'#6b7280'}] },
   SAN_FELIPE: { name:'San Felipe', city:'Medellín · Antioquia', rank:4, part:7.32,
     clientes:9453, crecC:17.2, nuevos:38, conocidos:66,
     venta:31608, crecV:36.5, contr:12782, mg:40.4,
     desemb:3344, crecD:16.5, freq:0.72, crecF:3.9, rec:273,
-    est:[0,6,17,36,20,13,8],
+    est:[0,6,17,36,20,13,8], riesgo:[18,3,21,5,5,49,1],
     lineas:[{n:'Colchones',p:40,c:'#1a3a5c'},{n:'Salas',p:29,c:'#e8722a'},{n:'Doble',p:22,c:'#3b82f6'},{n:'Complement. Dormit.',p:22,c:'#255680'},{n:'Comedores',p:17,c:'#f59e0b'},{n:'Descanso',p:12,c:'#ef4444'},{n:'Accesorios',p:10,c:'#10b981'},{n:'Serv. Cliente',p:10,c:'#6b7280'}] },
   MOLINOS_CC: { name:'Molinos CC', city:'Bogotá · Cundinamarca', rank:5, part:6.06,
     clientes:8382, crecC:22.9, nuevos:56, conocidos:48,
     venta:26166, crecV:45.5, contr:10571, mg:40.4,
     desemb:3122, crecD:18.4, freq:0.72, crecF:0.3, rec:274,
-    est:[1,7,12,28,29,21,1],
+    est:[1,7,12,28,29,21,1], riesgo:[18,2,22,5,10,46,0],
     lineas:[{n:'Salas',p:31,c:'#e8722a'},{n:'Doble',p:26,c:'#3b82f6'},{n:'Colchones',p:25,c:'#1a3a5c'},{n:'Complement. Dormit.',p:25,c:'#255680'},{n:'Comedores',p:19,c:'#f59e0b'},{n:'Accesorios',p:15,c:'#10b981'},{n:'Entretenimiento',p:11,c:'#8b5cf6'},{n:'Descanso',p:10,c:'#ef4444'}] },
   JAMAR_CRA30: { name:'Jamar Cra 30', city:'Bogotá · Cundinamarca', rank:6, part:5.75,
     clientes:7860, crecC:212.5, nuevos:73, conocidos:35,
     venta:24847, crecV:249.0, contr:10057, mg:40.5,
-    desemb:3161, crecD:11.7, freq:0.73, crecF:-6.5, rec:272, est:[1,9,22,49,13,4,2],
+    desemb:3161, crecD:11.7, freq:0.73, crecF:-6.5, rec:272, est:[1,9,22,49,13,4,2], riesgo:[14,7,17,3,6,57,1],
     lineas:[{n:'Colchones',p:30,c:'#1a3a5c'},{n:'Salas',p:28,c:'#e8722a'},{n:'Complement. Dormit.',p:26,c:'#255680'},{n:'Doble',p:25,c:'#3b82f6'},{n:'Accesorios',p:19,c:'#10b981'},{n:'Comedores',p:17,c:'#f59e0b'},{n:'Entretenimiento',p:11,c:'#8b5cf6'},{n:'Lencería Colchón',p:10,c:'#0ea5e9'}] },
   SANTA_MARTA: { name:'Santa Marta', city:'Santa Marta · Magdalena', rank:7, part:5.76,
     clientes:7392, crecC:24.2, nuevos:42, conocidos:62,
     venta:24860, crecV:42.4, contr:10066, mg:40.5,
     desemb:3363, crecD:14.7, freq:0.75, crecF:8.1, rec:266,
-    est:[0,5,19,48,15,4,10],
+    est:[0,5,19,48,15,4,10], riesgo:[13,7,28,6,6,41,2],
     lineas:[{n:'Colchones',p:40,c:'#1a3a5c'},{n:'Salas',p:26,c:'#e8722a'},{n:'Doble',p:26,c:'#3b82f6'},{n:'Complement. Dormit.',p:25,c:'#255680'},{n:'Comedores',p:16,c:'#f59e0b'},{n:'Descanso',p:13,c:'#ef4444'},{n:'Serv. Cliente',p:10,c:'#6b7280'},{n:'Lencería Colchón',p:10,c:'#0ea5e9'}] },
   CUATRO_VIENTOS: { name:'Cuatro Vientos', city:'Bogotá · Cundinamarca', rank:8, part:4.34,
     clientes:6970, crecC:30.8, nuevos:40, conocidos:62,
     venta:18737, crecV:60.2, contr:7582, mg:40.5,
     desemb:2688, crecD:22.5, freq:0.81, crecF:2.0, rec:270,
-    est:[0,3,28,50,14,4,1],
+    est:[0,3,28,50,14,4,1], riesgo:[23,6,29,6,5,35,1],
     lineas:[{n:'Colchones',p:45,c:'#1a3a5c'},{n:'Complement. Dormit.',p:23,c:'#255680'},{n:'Salas',p:22,c:'#e8722a'},{n:'Doble',p:20,c:'#3b82f6'},{n:'Comedores',p:14,c:'#f59e0b'},{n:'Serv. Cliente',p:12,c:'#6b7280'},{n:'Lencería Colchón',p:11,c:'#0ea5e9'},{n:'Entretenimiento',p:8,c:'#8b5cf6'}] },
   JAMAR_NORTE_BOGOTA: { name:'Jamar Norte Bogotá', city:'Bogotá · Cundinamarca', rank:9, part:4.63,
     clientes:6511, crecC:30.2, nuevos:68, conocidos:38,
     venta:20017, crecV:42.7, contr:8078, mg:40.4,
     desemb:3074, crecD:9.6, freq:0.75, crecF:5.2, rec:271,
-    est:[1,10,19,41,17,6,5],
+    est:[1,10,19,41,17,6,5], riesgo:[15,5,28,5,4,45,1],
     lineas:[{n:'Colchones',p:33,c:'#1a3a5c'},{n:'Salas',p:28,c:'#e8722a'},{n:'Doble',p:27,c:'#3b82f6'},{n:'Complement. Dormit.',p:26,c:'#255680'},{n:'Comedores',p:18,c:'#f59e0b'},{n:'Serv. Cliente',p:15,c:'#6b7280'},{n:'Accesorios',p:14,c:'#10b981'},{n:'Descanso',p:9,c:'#ef4444'}] },
   CACIQUE: { name:'Cacique', city:'Bucaramanga · Santander', rank:10, part:4.73,
     clientes:6181, crecC:30.0, nuevos:52, conocidos:54,
     venta:20448, crecV:52.3, contr:7626, mg:37.3,
     desemb:3308, crecD:17.1, freq:0.72, crecF:2.5, rec:268,
-    est:[0,7,23,27,23,16,3],
+    est:[0,7,23,27,23,16,3], riesgo:[15,6,19,4,6,52,1],
     lineas:[{n:'Colchones',p:31,c:'#1a3a5c'},{n:'Doble',p:30,c:'#3b82f6'},{n:'Complement. Dormit.',p:29,c:'#255680'},{n:'Salas',p:27,c:'#e8722a'},{n:'Comedores',p:18,c:'#f59e0b'},{n:'Accesorios',p:13,c:'#10b981'},{n:'Entretenimiento',p:13,c:'#8b5cf6'},{n:'Descanso',p:9,c:'#ef4444'}] },
   JAMAR_EL_EDEN: { name:'Jamar El Edén', city:'Medellín · Antioquia', rank:11, part:4.07,
     clientes:6072, crecC:18.4, nuevos:69, conocidos:37,
     venta:17578, crecV:25.5, contr:7013, mg:39.9,
     desemb:2895, crecD:6.0, freq:0.75, crecF:3.7, rec:270,
-    est:[1,9,22,49,16,2,1],
+    est:[1,9,22,49,16,2,1], riesgo:[12,7,19,3,7,53,1],
     lineas:[{n:'Colchones',p:28,c:'#1a3a5c'},{n:'Salas',p:28,c:'#e8722a'},{n:'Complement. Dormit.',p:25,c:'#255680'},{n:'Doble',p:25,c:'#3b82f6'},{n:'Comedores',p:19,c:'#f59e0b'},{n:'Accesorios',p:16,c:'#10b981'},{n:'Entretenimiento',p:10,c:'#8b5cf6'},{n:'Lencería Colchón',p:10,c:'#0ea5e9'}] },
   JAMAR_FABRICATO: { name:'Jamar Fabricato', city:'Bello · Antioquia', rank:12, part:4.29,
     clientes:5760, crecC:37.9, nuevos:65, conocidos:41,
     venta:18526, crecV:70.2, contr:7524, mg:40.6,
-    desemb:3216, crecD:23.5, freq:0.75, crecF:4.2, rec:273, est:[1,11,19,52,14,2,0],
+    desemb:3216, crecD:23.5, freq:0.75, crecF:4.2, rec:273, est:[1,11,19,52,14,2,0], riesgo:[23,0,22,7,10,41,1],
     lineas:[{n:'Salas',p:31,c:'#e8722a'},{n:'Doble',p:29,c:'#3b82f6'},{n:'Complement. Dormit.',p:29,c:'#255680'},{n:'Colchones',p:29,c:'#1a3a5c'},{n:'Comedores',p:20,c:'#f59e0b'},{n:'Accesorios',p:14,c:'#10b981'},{n:'Entretenimiento',p:9,c:'#8b5cf6'},{n:'Lencería Colchón',p:8,c:'#0ea5e9'}] },
   ALMACEN_VALLEDUPAR: { name:'Almacén Valledupar', city:'Valledupar · Cesar', rank:13, part:4.07,
     clientes:5216, crecC:29.4, nuevos:41, conocidos:62,
     venta:17563, crecV:55.8, contr:7166, mg:40.8,
-    desemb:3367, crecD:20.4, freq:0.74, crecF:2.7, rec:267, est:[0,9,18,51,11,9,2],
+    desemb:3367, crecD:20.4, freq:0.74, crecF:2.7, rec:267, est:[0,9,18,51,11,9,2], riesgo:[16,7,26,8,6,40,0],
     lineas:[{n:'Colchones',p:46,c:'#1a3a5c'},{n:'Doble',p:23,c:'#3b82f6'},{n:'Complement. Dormit.',p:21,c:'#255680'},{n:'Salas',p:18,c:'#e8722a'},{n:'Accesorios',p:10,c:'#10b981'},{n:'Comedores',p:9,c:'#f59e0b'},{n:'Serv. Cliente',p:8,c:'#6b7280'},{n:'Lencería Colchón',p:7,c:'#0ea5e9'}] },
   TRINITARIAS: { name:'Trinitarias', city:'Barranquilla · Atlántico', rank:14, part:2.99,
     clientes:5121, crecC:16.1, nuevos:44, conocidos:58,
     venta:12920, crecV:36.8, contr:5252, mg:40.7,
-    desemb:2523, crecD:17.8, freq:0.81, crecF:1.8, rec:272, est:[0,23,46,28,1,1,1],
+    desemb:2523, crecD:17.8, freq:0.81, crecF:1.8, rec:272, est:[0,23,46,28,1,1,1], riesgo:[28,5,30,7,5,28,2],
     lineas:[{n:'Colchones',p:55,c:'#1a3a5c'},{n:'Complement. Dormit.',p:22,c:'#255680'},{n:'Doble',p:18,c:'#3b82f6'},{n:'Lencería Colchón',p:14,c:'#0ea5e9'},{n:'Salas',p:13,c:'#e8722a'},{n:'Closet',p:12,c:'#a78bfa'},{n:'Comedores',p:9,c:'#f59e0b'},{n:'Juvenil',p:8,c:'#84cc16'}] },
   FLORIDA_CC: { name:'Florida CC', city:'Barranquilla · Atlántico', rank:15, part:3.22,
     clientes:4692, crecC:17.5, nuevos:61, conocidos:44,
     venta:13898, crecV:44.1, contr:5666, mg:40.8,
-    desemb:2962, crecD:22.6, freq:0.79, crecF:1.2, rec:270, est:[1,9,17,56,13,3,1],
+    desemb:2962, crecD:22.6, freq:0.79, crecF:1.2, rec:270, est:[1,9,17,56,13,3,1], riesgo:[23,1,24,6,7,40,1],
     lineas:[{n:'Colchones',p:37,c:'#1a3a5c'},{n:'Complement. Dormit.',p:33,c:'#255680'},{n:'Doble',p:25,c:'#3b82f6'},{n:'Salas',p:21,c:'#e8722a'},{n:'Comedores',p:11,c:'#f59e0b'},{n:'Lencería Colchón',p:9,c:'#0ea5e9'},{n:'Entretenimiento',p:8,c:'#8b5cf6'},{n:'Accesorios',p:8,c:'#10b981'}] },
   LAS_AMERICAS_CC: { name:'Las Américas CC', city:'Bogotá · Cundinamarca', rank:16, part:2.65,
     clientes:3986, crecC:8.1, nuevos:65, conocidos:40,
     venta:11465, crecV:25.6, contr:4584, mg:40.0,
-    desemb:2876, crecD:16.1, freq:0.77, crecF:-3.0, rec:267, est:[1,7,32,55,5,1,0],
+    desemb:2876, crecD:16.1, freq:0.77, crecF:-3.0, rec:267, est:[1,7,32,55,5,1,0], riesgo:[18,7,20,4,5,50,0],
     lineas:[{n:'Colchones',p:35,c:'#1a3a5c'},{n:'Doble',p:26,c:'#3b82f6'},{n:'Complement. Dormit.',p:25,c:'#255680'},{n:'Salas',p:22,c:'#e8722a'},{n:'Lencería Colchón',p:14,c:'#0ea5e9'},{n:'Comedores',p:12,c:'#f59e0b'},{n:'Accesorios',p:11,c:'#10b981'},{n:'Entretenimiento',p:11,c:'#8b5cf6'}] },
   MONTERIA: { name:'Montería', city:'Montería · Córdoba', rank:17, part:2.88,
     clientes:3853, crecC:23.7, nuevos:44, conocidos:59,
     venta:12459, crecV:49.3, contr:4980, mg:40.0,
-    desemb:3233, crecD:20.7, freq:0.74, crecF:-0.9, rec:266, est:[0,22,20,37,9,11,2],
+    desemb:3233, crecD:20.7, freq:0.74, crecF:-0.9, rec:266, est:[0,22,20,37,9,11,2], riesgo:[17,8,21,8,6,41,0],
     lineas:[{n:'Colchones',p:45,c:'#1a3a5c'},{n:'Doble',p:23,c:'#3b82f6'},{n:'Salas',p:20,c:'#e8722a'},{n:'Complement. Dormit.',p:19,c:'#255680'},{n:'Accesorios',p:14,c:'#10b981'},{n:'Serv. Cliente',p:13,c:'#6b7280'},{n:'Comedores',p:12,c:'#f59e0b'},{n:'Lencería Colchón',p:11,c:'#0ea5e9'}] },
   RIOHACHA: { name:'Riohacha', city:'Riohacha · La Guajira', rank:18, part:2.92,
     clientes:3554, crecC:42.8, nuevos:42, conocidos:62,
     venta:12593, crecV:70.1, contr:4923, mg:39.1,
-    desemb:3543, crecD:19.1, freq:0.72, crecF:1.9, rec:262, est:[0,11,22,55,11,2,0],
+    desemb:3543, crecD:19.1, freq:0.72, crecF:1.9, rec:262, est:[0,11,22,55,11,2,0], riesgo:[22,6,23,6,6,38,1],
     lineas:[{n:'Colchones',p:45,c:'#1a3a5c'},{n:'Serv. Cliente',p:31,c:'#6b7280'},{n:'Doble',p:26,c:'#3b82f6'},{n:'Complement. Dormit.',p:26,c:'#255680'},{n:'Salas',p:25,c:'#e8722a'},{n:'Comedores',p:18,c:'#f59e0b'},{n:'Accesorios',p:13,c:'#10b981'},{n:'Lencería Colchón',p:11,c:'#0ea5e9'}] },
   HIPERJAMAR: { name:'Hiperjamar', city:'Barranquilla · Atlántico', rank:19, part:2.77,
     clientes:3788, crecC:73.3, nuevos:38, conocidos:62,
     venta:9072, crecV:125.3, contr:3632, mg:40.0,
-    desemb:2395, crecD:30.0, freq:0.91, crecF:4.7, rec:252, est:[0,17,34,36,5,5,3],
+    desemb:2395, crecD:30.0, freq:0.91, crecF:4.7, rec:252, est:[0,17,34,36,5,5,3], riesgo:[21,3,33,5,5,31,4],
     lineas:[{n:'Colchones',p:41,c:'#1a3a5c'},{n:'Complement. Dormit.',p:21,c:'#255680'},{n:'Doble',p:20,c:'#3b82f6'},{n:'Salas',p:19,c:'#e8722a'},{n:'Comedores',p:12,c:'#f59e0b'},{n:'Serv. Cliente',p:9,c:'#6b7280'},{n:'Descanso',p:9,c:'#ef4444'},{n:'Closet',p:8,c:'#a78bfa'}] },
   LA_PLAZUELA: { name:'La Plazuela', city:'Bello · Antioquia', rank:20, part:2.80,
     clientes:3832, crecC:34.4, nuevos:33, conocidos:69,
     venta:9332, crecV:59.0, contr:3800, mg:40.7,
-    desemb:2435, crecD:18.3, freq:0.81, crecF:0.2, rec:273, est:[0,2,23,54,12,8,0],
+    desemb:2435, crecD:18.3, freq:0.81, crecF:0.2, rec:273, est:[0,2,23,54,12,8,0], riesgo:[20,6,29,6,5,35,2],
     lineas:[{n:'Colchones',p:44,c:'#1a3a5c'},{n:'Complement. Dormit.',p:21,c:'#255680'},{n:'Salas',p:20,c:'#e8722a'},{n:'Doble',p:17,c:'#3b82f6'},{n:'Comedores',p:13,c:'#f59e0b'},{n:'Serv. Cliente',p:10,c:'#6b7280'},{n:'Descanso',p:10,c:'#ef4444'},{n:'Accesorios',p:9,c:'#10b981'}] },
   SINCELEJO: { name:'Sincelejo', city:'Sincelejo · Sucre', rank:21, part:2.27,
     clientes:3103, crecC:27.4, nuevos:43, conocidos:62,
     venta:10189, crecV:54.1, contr:4259, mg:41.8,
-    desemb:3283, crecD:21.0, freq:0.72, crecF:1.8, rec:260, est:[0,6,22,50,16,3,4],
+    desemb:3283, crecD:21.0, freq:0.72, crecF:1.8, rec:260, est:[0,6,22,50,16,3,4], riesgo:[22,7,27,4,8,34,1],
     lineas:[{n:'Colchones',p:38,c:'#1a3a5c'},{n:'Salas',p:28,c:'#e8722a'},{n:'Doble',p:24,c:'#3b82f6'},{n:'Complement. Dormit.',p:24,c:'#255680'},{n:'Comedores',p:18,c:'#f59e0b'},{n:'Accesorios',p:18,c:'#10b981'},{n:'Serv. Cliente',p:13,c:'#6b7280'},{n:'Lencería Colchón',p:10,c:'#0ea5e9'}] }
 };
 
@@ -386,13 +389,13 @@ const STORES_PA = {
     clientes:6734, crecC:-0.1, nuevos:81, conocidos:24,
     venta:7448.68, crecV:3.3, contr:2680.57, mg:36.0,
     desemb:1106, crecD:3.3, freq:0.82, crecF:null, rec:null,
-    est:[5,35,21,16,13,6,0],
+    est:[0,2,15,29,14,25,9], riesgo:[6,8,5,5,10,66,4],
     lineas:[{n:'Colchones',p:39,c:'#003580'},{n:'Doble',p:26,c:'#0057b8'},{n:'Complement. Dormit.',p:26,c:'#1e6ebf'},{n:'Salas',p:23,c:'#d4af37'},{n:'Comedores',p:17,c:'#b8963a'},{n:'Entretenimiento',p:12,c:'#7bb3e0'},{n:'Descanso',p:10,c:'#4a90d9'},{n:'Closet',p:9,c:'#5b21b6'}] },
   ALBROOK_MALL: { name:'Albrook Mall II CC', city:'Ciudad de Panamá · Panamá', rank:2, part:17,
     clientes:4417, crecC:-0.8, nuevos:82, conocidos:22,
     venta:4334.57, crecV:-1.3, contr:1558.46, mg:36.0,
     desemb:981, crecD:-0.5, freq:0.89, crecF:null, rec:null,
-    est:[5,35,21,16,13,6,0],
+    est:[0,5,33,22,16,16,5], riesgo:[9,9,6,8,11,54,6],
     lineas:[{n:'Colchones',p:37,c:'#003580'},{n:'Doble',p:32,c:'#0057b8'},{n:'Complement. Dormit.',p:28,c:'#1e6ebf'},{n:'Salas',p:22,c:'#d4af37'},{n:'Comedores',p:13,c:'#b8963a'},{n:'Entretenimiento',p:12,c:'#7bb3e0'},{n:'Descanso',p:9,c:'#4a90d9'},{n:'Closet',p:9,c:'#5b21b6'}] },
   ECOMMERCE_PA: { name:'E-Commerce Panamá', city:'Panamá · Canal digital', rank:3, part:14,
     clientes:3676, crecC:51.3, nuevos:88, conocidos:14,
@@ -402,13 +405,13 @@ const STORES_PA = {
     clientes:2918, crecC:-17.5, nuevos:82, conocidos:21,
     venta:2970.04, crecV:-22.3, contr:1073.90, mg:36.2,
     desemb:1018, crecD:-5.8, freq:0.90, crecF:null, rec:null,
-    est:[5,35,21,16,13,6,0],
+    est:[0,13,58,11,5,3,6], riesgo:[10,11,8,11,14,45,5],
     lineas:[{n:'Colchones',p:48,c:'#003580'},{n:'Complement. Dormit.',p:28,c:'#1e6ebf'},{n:'Doble',p:27,c:'#0057b8'},{n:'Salas',p:20,c:'#d4af37'},{n:'Comedores',p:17,c:'#b8963a'},{n:'Closet',p:11,c:'#5b21b6'},{n:'Entretenimiento',p:11,c:'#7bb3e0'},{n:'Descanso',p:7,c:'#4a90d9'}] },
   LOS_ANDES_CC: { name:'Los Andes CC', city:'Ciudad de Panamá · Panamá', rank:5, part:11,
     clientes:2786, crecC:-1.9, nuevos:83, conocidos:20,
     venta:2488.11, crecV:-8.2, contr:860.73, mg:34.6,
     desemb:893, crecD:-6.4, freq:0.91, crecF:null, rec:null,
-    est:[5,35,21,16,13,6,0],
+    est:[0,7,53,23,11,3,1], riesgo:[12,11,8,13,10,41,9],
     lineas:[{n:'Colchones',p:47,c:'#003580'},{n:'Complement. Dormit.',p:31,c:'#1e6ebf'},{n:'Doble',p:30,c:'#0057b8'},{n:'Salas',p:19,c:'#d4af37'},{n:'Comedores',p:12,c:'#b8963a'},{n:'Closet',p:12,c:'#5b21b6'},{n:'Entretenimiento',p:8,c:'#7bb3e0'},{n:'Descanso',p:6,c:'#4a90d9'}] },
   LAS_AMERICAS_CC_PA: { name:'Las Américas CC', city:'Ciudad de Panamá · Panamá', rank:6, part:8,
     clientes:2008, crecC:-10.3, nuevos:82, conocidos:22,
@@ -420,19 +423,19 @@ const STORES_PA = {
     clientes:1470, crecC:-26.8, nuevos:81, conocidos:21,
     venta:1196.86, crecV:-33.9, contr:408.06, mg:34.1,
     desemb:814, crecD:-9.6, freq:0.93, crecF:null, rec:null,
-    est:[5,35,21,16,13,6,0],
+    est:[0,10,47,10,24,2,3], riesgo:[12,14,6,22,4,36,8],
     lineas:[{n:'Colchones',p:45,c:'#003580'},{n:'Doble',p:34,c:'#0057b8'},{n:'Complement. Dormit.',p:30,c:'#1e6ebf'},{n:'Salas',p:18,c:'#d4af37'},{n:'Closet',p:15,c:'#5b21b6'},{n:'Comedores',p:13,c:'#b8963a'},{n:'Descanso',p:8,c:'#4a90d9'},{n:'Entretenimiento',p:4,c:'#7bb3e0'}] },
   JAMAR_BRISAS: { name:'Jamar Brisas', city:'Ciudad de Panamá · Panamá', rank:8, part:6,
     clientes:1459, crecC:null, nuevos:81, conocidos:24,
     venta:1570.43, crecV:null, contr:597.00, mg:38.0,
     desemb:1076, crecD:null, freq:0.83, crecF:null, rec:null,
-    est:[5,35,21,16,13,6,0],
+    est:[0,1,17,23,50,2,3], riesgo:[4,7,4,4,13,70,2],
     lineas:[{n:'Colchones',p:31,c:'#003580'},{n:'Doble',p:28,c:'#0057b8'},{n:'Salas',p:27,c:'#d4af37'},{n:'Complement. Dormit.',p:23,c:'#1e6ebf'},{n:'Comedores',p:17,c:'#b8963a'},{n:'Entretenimiento',p:13,c:'#7bb3e0'},{n:'Descanso',p:12,c:'#4a90d9'},{n:'Closet',p:7,c:'#5b21b6'}] },
   JAMAR_DAVID: { name:'Jamar David', city:'David · Chiriquí', rank:9, part:5,
     clientes:1260, crecC:7.3, nuevos:84, conocidos:22,
     venta:1261.52, crecV:2.6, contr:506.11, mg:40.1,
     desemb:1001, crecD:-4.4, freq:0.86, crecF:null, rec:null,
-    est:[5,35,21,16,13,6,0],
+    est:[0,2,6,11,25,25,26], riesgo:[8,9,7,8,13,56,2],
     lineas:[{n:'Serv. Cliente',p:57,c:'#6b7280'},{n:'Colchones',p:32,c:'#003580'},{n:'Doble',p:30,c:'#0057b8'},{n:'Complement. Dormit.',p:27,c:'#1e6ebf'},{n:'Salas',p:19,c:'#d4af37'},{n:'Entretenimiento',p:19,c:'#7bb3e0'},{n:'Closet',p:11,c:'#5b21b6'},{n:'Comedores',p:8,c:'#b8963a'}] }
 };
 
@@ -495,6 +498,21 @@ function estBars(est) {
   <div style="font-size:.63rem;color:var(--muted);text-align:center;margin-top:2px">
     Estrato dominante: <strong style="color:var(--text)">E${est.indexOf(mx)} · ${mx}%</strong>
   </div>`;
+}
+
+function riesgoBar(r) {
+  if(!r) return `<div style="font-size:.7rem;color:var(--muted);text-align:center;padding:14px 0">Sin datos de clasificación de riesgo</div>`;
+  // Stacked horizontal bar
+  const stack = r.map((p,i)=>p>0?`<div style="flex:${p};background:${RC[i]};height:100%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:white;min-width:${p>=6?'auto':'0px'};overflow:hidden">${p>=5?p+'%':''}</div>`:'').join('');
+  // Individual bars
+  const maxR = Math.max(...r,1);
+  const bars = r.map((p,i)=>`
+    <div class="hbar-row" style="margin-bottom:5px">
+      <div class="hbar-lbl" style="font-size:.64rem;width:72px;display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${RC[i]};flex-shrink:0"></span>${RN[i]}</div>
+      <div class="hbar-bg"><div class="hbar-fill" style="width:${Math.round(p/maxR*100)}%;background:${RC[i]}"></div></div>
+      <div class="hbar-pct" style="font-size:.67rem;font-weight:700">${p}%</div>
+    </div>`).join('');
+  return `<div style="display:flex;height:20px;border-radius:4px;overflow:hidden;margin-bottom:10px">${stack}</div>${bars}`;
 }
 
 // storeLineas: [{n,p,c}] datos de la tienda; si null → muestra aviso pendiente
@@ -672,6 +690,11 @@ function render(key) {
     <div class="csub">% de clientes de esta tienda que compraron en cada línea vs promedio nacional Colombia · un cliente puede comprar en varias líneas · Fuente: Tableau</div>
     ${d.lineas ? '' : '<div class="cat-pending">⏳ Datos por tienda en extracción desde Tableau · se muestra distribución nacional como referencia</div>'}
     ${lineaBars(d.lineas || null, LINEAS_CO)}
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="ctitle">Clasificación de Riesgo · Part. Clientes 2025</div>
+    <div class="csub">% de clientes por categoría de riesgo (Año 2025 · Todos los meses) · Fuente: Tableau</div>
+    ${riesgoBar(d.riesgo)}
   </div>`;
 }
 
@@ -810,6 +833,11 @@ function renderPA(key) {
     <div class="csub">% de clientes de esta tienda que compraron en cada línea vs promedio nacional Panamá · un cliente puede comprar en varias líneas · Fuente: Tableau</div>
     ${d.lineas ? '' : '<div class="cat-pending">⏳ Datos por tienda en extracción desde Tableau · se muestra distribución nacional como referencia</div>'}
     ${lineaBars(d.lineas || null, LINEAS_PA)}
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="ctitle pa-title">Clasificación de Riesgo · Part. Clientes 2025</div>
+    <div class="csub">% de clientes por categoría de riesgo (Año 2025 · Todos los meses) · Fuente: Tableau</div>
+    ${riesgoBar(d.riesgo)}
   </div>`;
 }
 
