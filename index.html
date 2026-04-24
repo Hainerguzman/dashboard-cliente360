@@ -169,6 +169,59 @@ body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:
   .sg3 { grid-template-columns:1fr 1fr; }
 }
 
+/* ── VIEW TABS (Histórico / Actual) ─────────────────── */
+.view-tabs-bar{background:#1a2535;border-bottom:2px solid rgba(255,255,255,.08);display:flex;align-items:center;padding:0 24px;gap:4px;}
+.vtab{padding:10px 22px;font-size:.78rem;font-weight:700;background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;letter-spacing:.3px;}
+.vtab:hover{color:rgba(255,255,255,.85);}
+.vtab.active{color:white;border-bottom-color:#e8722a;}
+.view-panel{display:none;}
+.view-panel.active{display:block;}
+
+/* ── ACTUAL TAB STYLES ───────────────────────────────── */
+.actual-wrap{padding:20px;max-width:1300px;margin:0 auto;}
+.actual-header{background:linear-gradient(135deg,#0f2744,#1e4976);color:white;border-radius:12px;padding:20px 28px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.actual-header h2{font-size:1.15rem;font-weight:800;}
+.actual-header p{font-size:.73rem;opacity:.65;margin-top:3px;}
+.actual-badges{display:flex;gap:10px;flex-wrap:wrap;}
+.actual-badge{background:rgba(255,255,255,.12);border-radius:8px;padding:8px 16px;text-align:center;font-size:.68rem;}
+.actual-badge strong{display:block;font-size:1.05rem;font-weight:800;}
+.progress-note{background:linear-gradient(90deg,#fffbeb,#fef3c7);border:1px solid #f59e0b;border-radius:8px;padding:10px 16px;font-size:.73rem;color:#78350f;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+
+.cmp-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.cmp-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.cmp-card.abril{border-top:4px solid #f59e0b;}
+.cmp-card.marzo{border-top:4px solid #10b981;}
+.cmp-month-hdr{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.badge-inprogress{background:#fef3c7;color:#92400e;font-size:.6rem;padding:2px 8px;border-radius:20px;font-weight:700;}
+.badge-closed{background:#d1fae5;color:#065f46;font-size:.6rem;padding:2px 8px;border-radius:20px;font-weight:700;}
+.cmp-kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.cmp-kpi{background:#f8fafc;border-radius:8px;padding:11px;}
+.cmp-kpi-lbl{font-size:.59rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:3px;}
+.cmp-kpi-val{font-size:1.2rem;font-weight:800;line-height:1.1;}
+.cmp-kpi-sub{font-size:.63rem;color:var(--muted);margin-top:3px;}
+.cmp-section-hdr{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:12px 0 7px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+.cmp-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f1f5f9;font-size:.72rem;}
+.cmp-row:last-child{border-bottom:none;}
+.cmp-row-lbl{color:var(--muted);}
+.cmp-row-val{font-weight:700;}
+.mix-mini{display:flex;height:18px;border-radius:4px;overflow:hidden;margin-bottom:6px;}
+.mix-seg-mini{display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:white;}
+
+.vs-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.vs-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+.vs-title::before{content:'';display:inline-block;width:3px;height:13px;background:#e8722a;border-radius:2px;}
+.vs-metric{display:flex;align-items:center;gap:8px;margin-bottom:11px;}
+.vs-metric-name{font-size:.68rem;width:165px;flex-shrink:0;color:var(--text);font-weight:600;}
+.vs-bars{flex:1;}
+.vs-bar-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.vs-bar-label{font-size:.6rem;width:36px;flex-shrink:0;color:var(--muted);}
+.vs-bar-bg{flex:1;background:#e2e8f0;border-radius:3px;height:8px;overflow:hidden;}
+.vs-bar-fill{height:100%;border-radius:3px;}
+.vs-bar-val{font-size:.66rem;font-weight:700;width:80px;text-align:right;}
+.vs-legend{display:flex;gap:14px;font-size:.63rem;margin-bottom:10px;}
+.vs-legend span{display:flex;align-items:center;gap:5px;}
+.vs-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+
 /* ── LOGIN OVERLAY ─────────────────────────────────── */
 #login-overlay{position:fixed;inset:0;background:#F0F2F5;z-index:99999;display:flex;align-items:center;justify-content:center}
 #login-overlay.hidden{display:none}
@@ -220,6 +273,13 @@ body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:
   <div class="topbar-badge" id="topbar-badge">🇨🇴 Colombia 2025</div>
 </div>
 
+<!-- View Tabs -->
+<div class="view-tabs-bar">
+  <button class="vtab active" id="vtab-historico" onclick="switchView('historico')">📊 Histórico 2025</button>
+  <button class="vtab" id="vtab-actual" onclick="switchView('actual')">⚡ Actual 2026 · Colombia</button>
+</div>
+
+<div class="view-panel active" id="view-historico">
 <div class="layout">
   <aside class="sidebar">
     <!-- Country tabs -->
@@ -296,7 +356,298 @@ body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:
 
     <!-- Store dashboards injected here -->
   </main>
-</div>
+</div><!-- /layout -->
+</div><!-- /view-historico -->
+
+<!-- ═══════════════════════════════════════════════════════
+     PESTAÑA ACTUAL 2026 — Colombia · Abril vs Marzo
+     ═══════════════════════════════════════════════════════ -->
+<div class="view-panel" id="view-actual">
+<div class="actual-wrap">
+
+  <!-- Header -->
+  <div class="actual-header">
+    <div>
+      <h2>⚡ Análisis Actual · Colombia 2026</h2>
+      <p>Comparativo Abril 2026 (en curso) vs Marzo 2026 (cerrado) · Fuente: Tableau · Datos nacionales</p>
+    </div>
+    <div class="actual-badges">
+      <div class="actual-badge"><strong style="color:#f59e0b">10.379</strong>Clientes Abril</div>
+      <div class="actual-badge"><strong style="color:#10b981">13.945</strong>Clientes Marzo</div>
+      <div class="actual-badge"><strong>Abr 24, 2026</strong>Última actualización</div>
+    </div>
+  </div>
+
+  <!-- Note: April in progress -->
+  <div class="progress-note">
+    ⏳ <strong>Nota:</strong> Abril 2026 está en curso (datos al 24 de abril). Los datos de Marzo 2026 están cerrados y son definitivos.
+  </div>
+
+  <!-- Side-by-side month cards -->
+  <div class="cmp-cols">
+
+    <!-- ABRIL 2026 -->
+    <div class="cmp-card abril">
+      <div class="cmp-month-hdr">
+        <span style="color:#b45309">📅 Abril 2026</span>
+        <span class="badge-inprogress">⏳ En curso</span>
+      </div>
+
+      <div class="cmp-kpi-row">
+        <div class="cmp-kpi">
+          <div class="cmp-kpi-lbl">Clientes Totales</div>
+          <div class="cmp-kpi-val" style="color:#b45309">10.379</div>
+          <div class="cmp-kpi-sub"><span class="up">▲ +26.6%</span> vs Abr 2025</div>
+        </div>
+        <div class="cmp-kpi">
+          <div class="cmp-kpi-lbl">Venta Facturada</div>
+          <div class="cmp-kpi-val" style="color:#b45309">$27.598M</div>
+          <div class="cmp-kpi-sub"><span class="up">▲ +33.8%</span> vs Abr 2025</div>
+        </div>
+        <div class="cmp-kpi">
+          <div class="cmp-kpi-lbl">Contribución</div>
+          <div class="cmp-kpi-val">$11.545M</div>
+          <div class="cmp-kpi-sub">Mg. Oferta: <strong>41.8%</strong></div>
+        </div>
+        <div class="cmp-kpi">
+          <div class="cmp-kpi-lbl">Desembolso Prom.</div>
+          <div class="cmp-kpi-val">$2.659K</div>
+          <div class="cmp-kpi-sub"><span class="up">▲ +5.7%</span> crecimiento</div>
+        </div>
+      </div>
+
+      <!-- Mix bar -->
+      <div class="cmp-section-hdr">Mix de Clientes</div>
+      <div class="mix-mini">
+        <div class="mix-seg-mini" style="width:60%;background:#1a3a5c">60% Conocido</div>
+        <div class="mix-seg-mini" style="width:40%;background:#e8722a">40% Nuevo</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.68rem;margin-bottom:10px">
+        <span><span class="dot" style="background:#1a3a5c"></span>Conocido: <strong>6.188</strong> <span class="up">▲ +34.1%</span></span>
+        <span><span class="dot" style="background:#e8722a"></span>Nuevo: <strong>4.191</strong> <span class="up">▲ +16.9%</span></span>
+      </div>
+
+      <!-- Detail rows -->
+      <div class="cmp-section-hdr">Detalle Conocidos</div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Venta</span><span class="cmp-row-val">$15.542M <span style="color:var(--muted);font-weight:400">(56.3%)</span></span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Contribución</span><span class="cmp-row-val">$6.334M · Mg 40.8%</span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Desembolso prom.</span><span class="cmp-row-val">$2.512K <span class="up">▲ +3.5%</span></span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Crec. venta</span><span class="cmp-row-val"><span class="up">▲ +38.8%</span></span></div>
+
+      <div class="cmp-section-hdr">Detalle Nuevos</div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Venta</span><span class="cmp-row-val">$12.056M <span style="color:var(--muted);font-weight:400">(43.7%)</span></span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Contribución</span><span class="cmp-row-val">$5.211M · Mg 43.2%</span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Desembolso prom.</span><span class="cmp-row-val">$2.877K <span class="up">▲ +9.2%</span></span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Crec. venta</span><span class="cmp-row-val"><span class="up">▲ +27.7%</span></span></div>
+
+      <div class="cmp-section-hdr">Comportamiento</div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Frecuencia de compra</span><span class="cmp-row-val">0.84 <span class="up">▲ +33.6%</span></span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Conocido / Nuevo frec.</span><span class="cmp-row-val">0.82 / 0.87</span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Recencia promedio</span><span class="cmp-row-val">11 días</span></div>
+    </div>
+
+    <!-- MARZO 2026 -->
+    <div class="cmp-card marzo">
+      <div class="cmp-month-hdr">
+        <span style="color:#065f46">📅 Marzo 2026</span>
+        <span class="badge-closed">✅ Cerrado</span>
+      </div>
+
+      <div class="cmp-kpi-row">
+        <div class="cmp-kpi">
+          <div class="cmp-kpi-lbl">Clientes Totales</div>
+          <div class="cmp-kpi-val" style="color:#065f46">13.945</div>
+          <div class="cmp-kpi-sub"><span class="up">▲ +37.3%</span> vs Mar 2025</div>
+        </div>
+        <div class="cmp-kpi">
+          <div class="cmp-kpi-lbl">Venta Facturada</div>
+          <div class="cmp-kpi-val" style="color:#065f46">$39.548M</div>
+          <div class="cmp-kpi-sub"><span class="up">▲ +60.2%</span> vs Mar 2025</div>
+        </div>
+        <div class="cmp-kpi">
+          <div class="cmp-kpi-lbl">Contribución</div>
+          <div class="cmp-kpi-val">$16.659M</div>
+          <div class="cmp-kpi-sub">Mg. Oferta: <strong>42.1%</strong></div>
+        </div>
+        <div class="cmp-kpi">
+          <div class="cmp-kpi-lbl">Desembolso Prom.</div>
+          <div class="cmp-kpi-val">$2.836K</div>
+          <div class="cmp-kpi-sub"><span class="up">▲ +16.7%</span> crecimiento</div>
+        </div>
+      </div>
+
+      <!-- Mix bar -->
+      <div class="cmp-section-hdr">Mix de Clientes</div>
+      <div class="mix-mini">
+        <div class="mix-seg-mini" style="width:59%;background:#1a3a5c">59% Conocido</div>
+        <div class="mix-seg-mini" style="width:41%;background:#e8722a">41% Nuevo</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.68rem;margin-bottom:10px">
+        <span><span class="dot" style="background:#1a3a5c"></span>Conocido: <strong>8.193</strong> <span class="up">▲ +47.2%</span></span>
+        <span><span class="dot" style="background:#e8722a"></span>Nuevo: <strong>5.752</strong> <span class="up">▲ +25.2%</span></span>
+      </div>
+
+      <!-- Detail rows -->
+      <div class="cmp-section-hdr">Detalle Conocidos</div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Venta</span><span class="cmp-row-val">$21.595M <span style="color:var(--muted);font-weight:400">(54.6%)</span></span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Contribución</span><span class="cmp-row-val">$8.566M · Mg 39.7%</span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Desembolso prom.</span><span class="cmp-row-val">$2.636K <span class="up">▲ +15.3%</span></span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Crec. venta</span><span class="cmp-row-val"><span class="up">▲ +69.6%</span></span></div>
+
+      <div class="cmp-section-hdr">Detalle Nuevos</div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Venta</span><span class="cmp-row-val">$17.953M <span style="color:var(--muted);font-weight:400">(45.4%)</span></span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Contribución</span><span class="cmp-row-val">$8.093M · Mg 45.1%</span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Desembolso prom.</span><span class="cmp-row-val">$3.121K <span class="up">▲ +19.9%</span></span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Crec. venta</span><span class="cmp-row-val"><span class="up">▲ +50.1%</span></span></div>
+
+      <div class="cmp-section-hdr">Comportamiento</div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Frecuencia de compra</span><span class="cmp-row-val">0.81 <span class="dn">▼ -4.6%</span></span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Conocido / Nuevo frec.</span><span class="cmp-row-val">0.79 / 0.85</span></div>
+      <div class="cmp-row"><span class="cmp-row-lbl">Recencia promedio</span><span class="cmp-row-val">38 días</span></div>
+    </div>
+
+  </div><!-- /cmp-cols -->
+
+  <!-- Comparison Bar Chart: KPI side by side -->
+  <div class="vs-card">
+    <div class="vs-title">Comparativo Visual · Abril vs Marzo 2026 · Colombia</div>
+    <div class="vs-legend">
+      <span><span class="vs-legend-dot" style="background:#f59e0b"></span>Abril 2026 (en curso)</span>
+      <span><span class="vs-legend-dot" style="background:#10b981"></span>Marzo 2026 (cerrado)</span>
+    </div>
+
+    <!-- Clientes -->
+    <div class="vs-metric">
+      <div class="vs-metric-name">Clientes Totales</div>
+      <div class="vs-bars">
+        <div class="vs-bar-row">
+          <div class="vs-bar-label" style="color:#b45309">Abril</div>
+          <div class="vs-bar-bg"><div class="vs-bar-fill" style="width:74%;background:#f59e0b"></div></div>
+          <div class="vs-bar-val" style="color:#b45309">10.379 <span class="up">▲26.6%</span></div>
+        </div>
+        <div class="vs-bar-row">
+          <div class="vs-bar-label" style="color:#065f46">Marzo</div>
+          <div class="vs-bar-bg"><div class="vs-bar-fill" style="width:100%;background:#10b981"></div></div>
+          <div class="vs-bar-val" style="color:#065f46">13.945 <span class="up">▲37.3%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Venta -->
+    <div class="vs-metric">
+      <div class="vs-metric-name">Venta Facturada (COP M)</div>
+      <div class="vs-bars">
+        <div class="vs-bar-row">
+          <div class="vs-bar-label" style="color:#b45309">Abril</div>
+          <div class="vs-bar-bg"><div class="vs-bar-fill" style="width:70%;background:#f59e0b"></div></div>
+          <div class="vs-bar-val" style="color:#b45309">$27.598M <span class="up">▲33.8%</span></div>
+        </div>
+        <div class="vs-bar-row">
+          <div class="vs-bar-label" style="color:#065f46">Marzo</div>
+          <div class="vs-bar-bg"><div class="vs-bar-fill" style="width:100%;background:#10b981"></div></div>
+          <div class="vs-bar-val" style="color:#065f46">$39.548M <span class="up">▲60.2%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contribución -->
+    <div class="vs-metric">
+      <div class="vs-metric-name">Contribución Oferta</div>
+      <div class="vs-bars">
+        <div class="vs-bar-row">
+          <div class="vs-bar-label" style="color:#b45309">Abril</div>
+          <div class="vs-bar-bg"><div class="vs-bar-fill" style="width:69%;background:#f59e0b"></div></div>
+          <div class="vs-bar-val" style="color:#b45309">$11.545M · <strong>41.8%</strong></div>
+        </div>
+        <div class="vs-bar-row">
+          <div class="vs-bar-label" style="color:#065f46">Marzo</div>
+          <div class="vs-bar-bg"><div class="vs-bar-fill" style="width:100%;background:#10b981"></div></div>
+          <div class="vs-bar-val" style="color:#065f46">$16.659M · <strong>42.1%</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desembolso -->
+    <div class="vs-metric">
+      <div class="vs-metric-name">Desembolso Promedio</div>
+      <div class="vs-bars">
+        <div class="vs-bar-row">
+          <div class="vs-bar-label" style="color:#b45309">Abril</div>
+          <div class="vs-bar-bg"><div class="vs-bar-fill" style="width:94%;background:#f59e0b"></div></div>
+          <div class="vs-bar-val" style="color:#b45309">$2.659K <span class="up">▲5.7%</span></div>
+        </div>
+        <div class="vs-bar-row">
+          <div class="vs-bar-label" style="color:#065f46">Marzo</div>
+          <div class="vs-bar-bg"><div class="vs-bar-fill" style="width:100%;background:#10b981"></div></div>
+          <div class="vs-bar-val" style="color:#065f46">$2.836K <span class="up">▲16.7%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Frecuencia -->
+    <div class="vs-metric">
+      <div class="vs-metric-name">Frecuencia de Compra</div>
+      <div class="vs-bars">
+        <div class="vs-bar-row">
+          <div class="vs-bar-label" style="color:#b45309">Abril</div>
+          <div class="vs-bar-bg"><div class="vs-bar-fill" style="width:100%;background:#f59e0b"></div></div>
+          <div class="vs-bar-val" style="color:#b45309">0.84 <span class="up">▲33.6%</span></div>
+        </div>
+        <div class="vs-bar-row">
+          <div class="vs-bar-label" style="color:#065f46">Marzo</div>
+          <div class="vs-bar-bg"><div class="vs-bar-fill" style="width:96%;background:#10b981"></div></div>
+          <div class="vs-bar-val" style="color:#065f46">0.81 <span class="dn">▼-4.6%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recencia -->
+    <div class="vs-metric">
+      <div class="vs-metric-name">Recencia (días desde última compra)</div>
+      <div class="vs-bars">
+        <div class="vs-bar-row">
+          <div class="vs-bar-label" style="color:#b45309">Abril</div>
+          <div class="vs-bar-bg"><div class="vs-bar-fill" style="width:29%;background:#f59e0b"></div></div>
+          <div class="vs-bar-val" style="color:#b45309">11 días</div>
+        </div>
+        <div class="vs-bar-row">
+          <div class="vs-bar-label" style="color:#065f46">Marzo</div>
+          <div class="vs-bar-bg"><div class="vs-bar-fill" style="width:100%;background:#10b981"></div></div>
+          <div class="vs-bar-val" style="color:#065f46">38 días</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /vs-card -->
+
+  <!-- Insights Card -->
+  <div class="vs-card">
+    <div class="vs-title">📌 Lecturas Clave · Abril vs Marzo 2026</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.73rem;line-height:1.55">
+      <div>
+        <div style="font-weight:700;color:#1a3a5c;margin-bottom:6px">Volumen de clientes</div>
+        <p>Abril (10.379) lleva un ritmo <strong>~34.5k por mes proyectado</strong>, inferior a los 13.945 de Marzo. Esto es esperado: el mes no ha cerrado (datos al día 24).</p>
+      </div>
+      <div>
+        <div style="font-weight:700;color:#1a3a5c;margin-bottom:6px">Crecimiento vs año anterior</div>
+        <p>Ambos meses superan el año anterior: Abril +26.6% y Marzo +37.3% en clientes. El impulso YoY de Marzo fue más fuerte.</p>
+      </div>
+      <div>
+        <div style="font-weight:700;color:#1a3a5c;margin-bottom:6px">Margen estable</div>
+        <p>El Mg. Oferta se mantiene sólido: 41.8% en Abril y 42.1% en Marzo. Señal de buena gestión de precios y contribución.</p>
+      </div>
+      <div>
+        <div style="font-weight:700;color:#1a3a5c;margin-bottom:6px">Frecuencia y recencia</div>
+        <p>La frecuencia de Abril (0.84) supera a Marzo (0.81), con crecimiento YoY de +33.6%. La recencia de Abril (11 días) vs Marzo (38 días) refleja que los clientes de Abril compraron más recientemente.</p>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:.65rem;color:var(--muted)">
+      Datos extraídos de Tableau (elena.mueblesjamar.com.co) · Análisis Cliente 360 · Colombia · Año 2026 · Fuente: Muebles Jamar BI
+    </div>
+  </div>
+
+</div><!-- /actual-wrap -->
+</div><!-- /view-actual -->
 
 <script>
 const EC = ['#94a3b8','#64748b','#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6'];
@@ -960,6 +1311,15 @@ function switchCountry(country) {
     const btn = document.getElementById('btn-VIA_ESPANA');
     show('VIA_ESPANA', btn, 'pa');
   }
+}
+
+// ─── VIEW SWITCHER ────────────────────────────────────────────────────────────
+function switchView(view) {
+  document.getElementById('view-historico').classList.toggle('active', view === 'historico');
+  document.getElementById('view-actual').classList.toggle('active', view === 'actual');
+  document.getElementById('vtab-historico').classList.toggle('active', view === 'historico');
+  document.getElementById('vtab-actual').classList.toggle('active', view === 'actual');
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 // Init
